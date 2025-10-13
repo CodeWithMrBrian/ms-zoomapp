@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MeetingSync - Zoom App</title>
+    <meta name="description" content="Real-time AI translation for Zoom meetings" />
+
+    <!-- ZOOM INTEGRATION DISABLED FOR GUI DEVELOPMENT -->
+    <!-- Zoom App Metadata -->
+    <!-- <meta name="zoom-app-id" content="meetingsync-translation" /> -->
+    <!-- <meta name="zoom-app-version" content="1.0.0" /> -->
+
+    <!-- Security Headers (Zoom-specific headers disabled for GUI development) -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.zoom.us; script-src 'self' 'unsafe-inline' https://*.zoom.us; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.zoom.us;"> -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <!-- X-Frame-Options cannot be set via meta tag - disabled -->
+    <!-- <meta http-equiv="X-Frame-Options" content="SAMEORIGIN"> -->
+    <!-- <meta name="referrer" content="strict-origin-when-cross-origin"> -->
+
+    <style>
+      /* Prevent flash of unstyled content */
+      html {
+        background: #f9fafb;
+      }
+      html.dark {
+        background: #111827;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+    </style>
+
+    <!-- Dark Mode Detection Script (runs before page renders) -->
+    <script>
+      // Detect system dark mode preference and apply immediately
+      (function() {
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const applyDarkMode = (e) => {
+          if (e.matches) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        };
+
+        // Apply on load
+        applyDarkMode(darkModeMediaQuery);
+
+        // Listen for changes
+        darkModeMediaQuery.addEventListener('change', applyDarkMode);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

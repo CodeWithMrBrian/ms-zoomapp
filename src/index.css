@@ -1,0 +1,400 @@
+@import 'tailwindcss';
+
+/* V3 Global Styles - Desktop-Focused Enterprise Application with Dark Mode */
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth transitions for theme switching */
+body,
+body * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #f9fafb; /* gray-50 - light mode */
+  color: #111827; /* gray-900 - light mode */
+}
+
+/* Dark mode styles */
+.dark body {
+  background-color: #111827; /* gray-900 - dark mode */
+  color: #f9fafb; /* gray-50 - dark mode */
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ============================================
+   FOCUS STYLES (WCAG 2.1 AA Compliance)
+   ============================================ */
+*:focus {
+  outline: 2px solid #14b8a6; /* teal-600 */
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid #14b8a6; /* teal-600 */
+  outline-offset: 2px;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0;
+}
+
+/* ============================================
+   SMOOTH SCROLLING
+   ============================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================
+   SELECTION
+   ============================================ */
+::selection {
+  background-color: #99f6e4; /* teal-200 */
+  color: #042f2e; /* teal-950 */
+}
+
+/* ============================================
+   SCROLLBAR STYLES
+   ============================================ */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* gray-100 */
+  border-left: 1px solid #e2e8f0; /* gray-200 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* gray-300 */
+  border: 3px solid #f1f5f9; /* gray-100 */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* gray-400 */
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b; /* gray-800 */
+  border-left: 1px solid #334155; /* gray-700 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569; /* gray-600 */
+  border: 3px solid #1e293b; /* gray-800 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b; /* gray-500 */
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #cbd5e1 #f1f5f9; /* thumb track */
+}
+
+.dark * {
+  scrollbar-color: #475569 #1e293b; /* thumb track */
+}
+
+/* ============================================
+   ACCESSIBILITY - SKIP LINK
+   ============================================ */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #14b8a6;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================
+   FLUID TYPOGRAPHY (2025 Modern Scale)
+   ============================================ */
+
+/* Display text - Hero headlines */
+.text-display-xl {
+  font-size: clamp(3rem, 8vw, 6rem); /* 48px → 96px */
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+.text-display-lg {
+  font-size: clamp(2.5rem, 6vw, 4rem); /* 40px → 64px */
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+/* Headline text - Section headers */
+.text-headline-lg {
+  font-size: clamp(2rem, 4vw, 3rem); /* 32px → 48px */
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+.text-headline-md {
+  font-size: clamp(1.5rem, 3vw, 2rem); /* 24px → 32px */
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+/* Body text - Content */
+.text-body-lg {
+  font-size: clamp(1.125rem, 2vw, 1.25rem); /* 18px → 20px */
+  line-height: 1.6;
+}
+
+/* ============================================
+   HSL COLOR SYSTEM - Dynamic Theming
+   ============================================ */
+
+:root {
+  /* Primary Teal - Innovation & Tech (Calm & Focus) */
+  --primary-hue: 174;
+  --primary-saturation: 80%;
+  --primary-lightness: 45%;
+
+  /* Derived colors from primary */
+  --primary: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
+  --primary-light: hsl(var(--primary-hue), var(--primary-saturation), 70%);
+  --primary-dark: hsl(var(--primary-hue), var(--primary-saturation), 30%);
+  --primary-rgb: 13, 148, 136; /* For rgba() usage */
+
+  /* Contextual color psychology variations */
+  --trust-primary: hsl(220, 70%, 45%); /* Deep Blue - Financial, Healthcare */
+  --trust-accent: hsl(160, 75%, 40%); /* Emerald Green */
+
+  --energy-primary: hsl(355, 75%, 50%); /* Red - Marketing, Sales */
+  --energy-accent: hsl(25, 85%, 55%); /* Orange */
+
+  --calm-primary: hsl(174, 80%, 45%); /* Teal - Productivity, Education */
+  --calm-accent: hsl(195, 85%, 50%); /* Sky Blue */
+
+  /* Gradient endpoints */
+  --gradient-start: hsl(var(--primary-hue), var(--primary-saturation), 50%);
+  --gradient-end: hsl(calc(var(--primary-hue) + 10), 85%, 55%);
+}
+
+/* Dark mode adjustments */
+.dark {
+  --primary-lightness: 55%; /* Lighter in dark mode for contrast */
+}
+
+/* Context-aware theming classes */
+.theme-trust {
+  --primary-hue: 220;
+  --primary-saturation: 70%;
+}
+
+.theme-energy {
+  --primary-hue: 355;
+  --primary-saturation: 75%;
+}
+
+/* ============================================
+   GLASSMORPHISM EFFECTS
+   ============================================ */
+
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass {
+  background: rgba(17, 24, 39, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass-card {
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   FIBONACCI SPACING SCALE
+   ============================================ */
+
+:root {
+  --space-1: 0.5rem;    /* 8px */
+  --space-2: 0.75rem;   /* 12px */
+  --space-3: 1.25rem;   /* 20px */
+  --space-5: 2rem;      /* 32px */
+  --space-8: 3.25rem;   /* 52px */
+  --space-13: 5.25rem;  /* 84px */
+  --space-21: 8.5rem;   /* 136px */
+}
+
+/* ============================================
+   MOTION ACCESSIBILITY
+   ============================================ */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Preserve essential theme transitions only */
+  body,
+  body * {
+    transition: background-color 0.01ms, color 0.01ms, border-color 0.01ms !important;
+  }
+}
+
+/* ============================================
+   MODERN CSS FEATURES - Container Queries & Logical Properties
+   ============================================ */
+
+/* Container Queries for component-based responsive design */
+.container-card {
+  container-type: inline-size;
+  container-name: card;
+}
+
+@container card (min-width: 400px) {
+  .responsive-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+@container card (min-width: 600px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Logical Properties for i18n support (LTR/RTL) */
+.logical-spacing {
+  margin-inline-start: 1rem;
+  margin-inline-end: 2rem;
+  margin-block-start: 1rem;
+  margin-block-end: 2rem;
+  padding-inline: 1rem;
+  padding-block: 0.5rem;
+}
+
+.logical-border {
+  border-inline-start: 4px solid var(--primary);
+  border-block-end: 1px solid var(--border-color, #e5e7eb);
+}
+
+/* Modern Grid & Flexbox utilities */
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.grid-auto-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* CSS Subgrid support */
+@supports (grid-template-rows: subgrid) {
+  .subgrid-container {
+    display: grid;
+    grid-template-rows: subgrid;
+  }
+}
+
+/* Modern aspect ratio */
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+/* ============================================
+   ACCESSIBILITY - SCREEN READER ONLY
+   ============================================ */
+
+/* Screen reader only utility - hides content visually but keeps it accessible for assistive technology */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
