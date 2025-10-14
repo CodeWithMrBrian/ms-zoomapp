@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Breadcrumbs, BreadcrumbItem } from '../ui/Breadcrumbs';
@@ -9,7 +9,7 @@ import { MOCK_TEMPLATES } from '../../utils/mockData';
 import { getLanguageByCode } from '../../utils/constants';
 
 export interface TemplatePreviewPageProps {
-  templateId: string;
+// ...existing code...
   onBack: () => void;
   onEdit?: () => void;
   onUse?: () => void;
@@ -20,7 +20,7 @@ export interface TemplatePreviewPageProps {
  *
  * Displays detailed template information with usage stats and actions.
  */
-export function TemplatePreviewPage({ templateId, onBack, onEdit, onUse }: TemplatePreviewPageProps) {
+export function TemplatePreviewPage({ onBack, onEdit, onUse }: TemplatePreviewPageProps) {
   const { toast, showToast } = useToast();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showHostInstructions, setShowHostInstructions] = useState(false);

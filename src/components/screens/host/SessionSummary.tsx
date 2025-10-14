@@ -4,7 +4,7 @@ import { Badge } from '../../ui/Badge';
 import { NavigationHeader } from '../../ui/NavigationHeader';
 import { useSession } from '../../../context/SessionContext';
 import { useUser } from '../../../context/UserContext';
-import { LANGUAGES, PRICING_TIERS, formatCurrency, getLanguageDisplayName } from '../../../utils/constants';
+import { getLanguageDisplayName } from '../../../utils/constants';
 
 /**
  * SessionSummary Screen - Shown after host ends a session
@@ -223,7 +223,7 @@ export function SessionSummary({ onStartNewSession, onReturnToDashboard, onOpenT
       </Card>
 
       {/* Current Billing Period Usage (PAYG with payment method) */}
-      {isPAYG && user && user.payment_method_added && !user.is_free_trial_active && (
+  {isPAYG && user && user.payment_method_added && (
         <Card variant="default" padding="lg">
           <CardContent>
             <div className="flex items-center justify-between">

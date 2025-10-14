@@ -7,7 +7,7 @@ export interface AddPaymentMethodModalProps {
   isOpen: boolean;
   onClose: () => void;
   onPaymentMethodAdded: () => void;
-  selectedTier?: string;
+// ...existing code...
   context?: 'add' | 'update'; // New prop to distinguish between adding and updating
 }
 
@@ -24,7 +24,7 @@ export function AddPaymentMethodModal({
   isOpen,
   onClose,
   onPaymentMethodAdded,
-  selectedTier = 'professional',
+// ...existing code...
   context = 'add'
 }: AddPaymentMethodModalProps) {
   // Prefilled with mock data for quick testing
@@ -122,12 +122,7 @@ export function AddPaymentMethodModal({
     onClose();
   };
 
-  // Get tier details for display
-  const tierDetails = {
-    starter: { name: 'Starter', rate: 45, languages: '1 translation (2 total languages)' },
-    professional: { name: 'Professional', rate: 75, languages: '5 translations (6 total languages)' },
-    enterprise: { name: 'Enterprise', rate: 105, languages: '15 translations (16 total languages)' }
-  }[selectedTier] || { name: 'Professional', rate: 75, languages: '5 translations (6 total languages)' };
+  // ...existing code...
 
   return (
     <Modal

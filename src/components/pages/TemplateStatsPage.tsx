@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// ...existing code...
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -8,7 +8,7 @@ import { MOCK_TEMPLATES } from '../../utils/mockData';
 import { getLanguageByCode } from '../../utils/constants';
 
 export interface TemplateStatsPageProps {
-  templateId: string;
+// ...existing code...
   onBack: () => void;
 }
 
@@ -55,7 +55,7 @@ const MOCK_STATS = {
  *
  * Displays detailed statistics and analytics for a specific template.
  */
-export function TemplateStatsPage({ templateId, onBack }: TemplateStatsPageProps) {
+export function TemplateStatsPage({ onBack }: TemplateStatsPageProps) {
   const { toast, showToast } = useToast();
   const template = MOCK_TEMPLATES[1]; // Using Monthly All-Hands template
 
