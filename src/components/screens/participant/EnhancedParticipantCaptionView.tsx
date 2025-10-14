@@ -3,7 +3,7 @@ import { Card, CardContent } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { useSession } from '../../../context/SessionContext';
-import { useUser } from '../../../context/UserContext';
+// User context no longer needed - all TTS features available to all tiers
 import { LANGUAGES } from '../../../utils/constants';
 // ...existing code...
 
@@ -41,8 +41,27 @@ export function EnhancedParticipantCaptionView({
   onChangeLanguage,
   onLeave
 }: EnhancedParticipantCaptionViewProps) {
+  // Add a ref for the top of the page
+  const topPageRef = useRef<HTMLDivElement | null>(null);
   const { session, captions, currentCaption } = useSession();
-  const { isDailyFreeTier } = useUser();
+  
+  // Focus the top of the page on mount and set window title
+  useEffect(() => {
+    if (topPageRef.current) {
+      topPageRef.current.focus();
+    }
+    
+    // Set meaningful window title showing current page context
+    const originalTitle = document.title;
+    const meetingTitle = session?.meeting_title || 'Meeting';
+    document.title = `Live Translation View - ${meetingTitle} | MeetingSync`;
+    
+    // Restore original title on cleanup
+    return () => {
+      document.title = originalTitle;
+    };
+  }, [session?.meeting_title]);
+  // Free tier now has access to all TTS and volume control features
   
   // Display and Audio States
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
@@ -93,7 +112,7 @@ export function EnhancedParticipantCaptionView({
 
   // TTS Functions
   const handleTTSToggle = useCallback(() => {
-    if (!ttsState.isAvailable || isDailyFreeTier) return;
+  if (!ttsState.isAvailable) return;
     
     setTtsState(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
     
@@ -107,7 +126,7 @@ export function EnhancedParticipantCaptionView({
         setCurrentlyPlaying(currentCaption?.id || null);
       }
     }
-  }, [ttsState.isPlaying, ttsState.isAvailable, isDailyFreeTier, currentCaption]);
+  }, [ttsState.isPlaying, ttsState.isAvailable, currentCaption]);
 
   const handleVolumeChange = (volume: number) => {
     setTtsState(prev => ({ ...prev, volume }));
@@ -184,7 +203,7 @@ export function EnhancedParticipantCaptionView({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+  <div ref={topPageRef} tabIndex={-1} style={{ outline: 'none' }} className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       {/* Enhanced Header Bar */}
       <div className="bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-700 dark:to-cyan-700 shadow-lg px-4 py-3 sticky top-0 z-20">
         <div className="flex items-center justify-between">
@@ -253,6 +272,16 @@ export function EnhancedParticipantCaptionView({
         )}
       </div>
 
+      {/* Page Title */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Live Translation View</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Listen to live translations and view captions in {getLanguageName(selectedLanguage)}
+          </p>
+        </div>
+      </div>
+
       {/* TTS Controls Panel */}
       {showControls && (
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
@@ -263,7 +292,7 @@ export function EnhancedParticipantCaptionView({
                 variant={ttsState.isPlaying ? "secondary" : "primary"}
                 size="sm"
                 onClick={handleTTSToggle}
-                disabled={!ttsState.isAvailable || isDailyFreeTier}
+                disabled={!ttsState.isAvailable}
                 className="flex items-center gap-2"
               >
                 {ttsState.isPlaying ? (
@@ -275,31 +304,25 @@ export function EnhancedParticipantCaptionView({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15" />
                   </svg>
                 )}
-                {isDailyFreeTier ? 'TTS (Upgrade Required)' : (ttsState.isPlaying ? 'Pause' : 'Play Audio')}
+                {ttsState.isPlaying ? 'Pause' : 'Listen'}
               </Button>
 
-              {!isDailyFreeTier && (
-                <>
-                  {/* Volume Control */}
-                  <div className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728" />
-                    </svg>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.1"
-                      value={ttsState.volume}
-                      onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                      className="w-20 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
-                    />
-                    <span className="text-xs text-gray-500 min-w-[2rem]">{Math.round(ttsState.volume * 100)}%</span>
-                  </div>
-
-
-                </>
-              )}
+              {/* Volume Control - now available for all tiers */}
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728" />
+                </svg>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={ttsState.volume}
+                  onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                  className="w-20 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
+                />
+                <span className="text-xs text-gray-500 min-w-[2rem]">{Math.round(ttsState.volume * 100)}%</span>
+              </div>
             </div>
 
             {/* Display Controls */}
@@ -368,9 +391,9 @@ export function EnhancedParticipantCaptionView({
                   <p className="text-gray-600 dark:text-gray-400">
                     Waiting for translated captions in {getLanguageName(selectedLanguage)}
                   </p>
-                  {ttsState.isAvailable && !isDailyFreeTier && (
+                  {ttsState.isAvailable && (
                     <p className="text-sm text-teal-600 dark:text-teal-400">
-                      🔊 Audio translation ready - click play to hear captions
+                      🔊 Audio translation ready - click listen to hear captions
                     </p>
                   )}
                 </div>
@@ -449,7 +472,7 @@ export function EnhancedParticipantCaptionView({
                       </button>
 
                       {/* Play TTS Button */}
-                      {!isDailyFreeTier && ttsState.isAvailable && (
+                      {ttsState.isAvailable && (
                         <button
                           onClick={() => {
                             if (currentlyPlaying === caption.id) {

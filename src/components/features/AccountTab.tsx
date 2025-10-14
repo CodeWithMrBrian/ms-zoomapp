@@ -6,6 +6,7 @@ import { Badge } from '../ui/Badge';
 import { useUser } from '../../context/UserContext';
 import { MOCK_INVOICES } from '../../utils/mockData';
 import { formatCurrency, formatDate, PRICING_TIERS } from '../../utils/constants';
+import { pricingConfig } from '../../utils/pricingManager';
 import { InvoiceDetailPage } from '../pages/InvoiceDetailPage';
 import { PaymentMethodsPage } from '../pages/PaymentMethodsPage';
 
@@ -165,33 +166,29 @@ export function AccountTab({ onAddPaymentMethod }: AccountTabProps = {}) {
                   Choose Your Plan:
                 </p>
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div>
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">Starter</span>
-                      <span className="text-gray-600 dark:text-gray-400 ml-2">1 translation (2 total)</span>
+                  {Object.values(PRICING_TIERS).map((tier: any) => (
+                    <div key={tier.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div>
+                        <span className="font-semibold text-gray-900 dark:text-gray-100">{tier.name}</span>
+                        <span className="text-gray-600 dark:text-gray-400 ml-2">{pricingConfig.formatLanguageLimitsDescription(tier.translation_limit, tier.total_language_limit)}</span>
+                      </div>
+                      <span className="font-bold text-teal-600 dark:text-teal-400">{pricingConfig.formatHourlyRate(tier.price_per_hour)}</span>
                     </div>
-                    <span className="font-bold text-teal-600 dark:text-teal-400">$45/hour</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div>
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">Professional</span>
-                      <span className="text-gray-600 dark:text-gray-400 ml-2">5 translations (6 total)</span>
-                    </div>
-                    <span className="font-bold text-teal-600 dark:text-teal-400">$75/hour</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div>
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">Enterprise</span>
-                      <span className="text-gray-600 dark:text-gray-400 ml-2">15 translations (16 total)</span>
-                    </div>
-                    <span className="font-bold text-teal-600 dark:text-teal-400">$105/hour</span>
-                  </div>
+                  ))}
                 </div>
               </div>
 
               {/* Upgrade Actions */}
               <div className="flex gap-3 pt-2">
-                <Button variant="primary" onClick={() => alert('To select a pricing plan:\n\n1. Close this Settings page (click Back button)\n2. You\'ll return to the Start Translation screen\n3. The pricing tier selector will be available there\n\nChoose from:\n• Starter ($45/hr - 1 translation, 2 total languages)\n• Professional ($75/hr - 5 translations, 6 total languages)  \n• Enterprise ($105/hr - 15 translations, 16 total languages)')}>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    const planList = Object.values(PRICING_TIERS)
+                      .map((tier: any) => `• ${tier.name} (${pricingConfig.formatHourlyRate(tier.price_per_hour)} - ${pricingConfig.formatLanguageLimitsDescription(tier.translation_limit, tier.total_language_limit)})`)
+                      .join('\n');
+                    alert(`To select a pricing plan:\n\n1. Close this Settings page (click Back button)\n2. You\'ll return to the Start Translation screen\n3. The pricing tier selector will be available there\n\nChoose from:\n${planList}`);
+                  }}
+                >
                   Choose Your Plan
                 </Button>
                 <Button variant="secondary" onClick={handleAddPaymentMethod}>
@@ -214,10 +211,10 @@ export function AccountTab({ onAddPaymentMethod }: AccountTabProps = {}) {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-bold text-teal-600 dark:text-teal-400">
-                    {user.subscription_tier === 'starter' ? 'Starter' : user.subscription_tier === 'professional' ? 'Professional' : 'Enterprise'} Tier
+                    {PRICING_TIERS[user.subscription_tier].name} Tier
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    ${user.subscription_tier === 'starter' ? '45' : user.subscription_tier === 'professional' ? '75' : '105'}/hour • Pay-As-You-Go
+                    {pricingConfig.formatHourlyRate(PRICING_TIERS[user.subscription_tier].price_per_hour)} • Pay-As-You-Go
                   </p>
                 </div>
                 <Badge variant="success">Active</Badge>

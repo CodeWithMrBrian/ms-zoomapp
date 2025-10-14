@@ -22,6 +22,7 @@ export interface FreeTierConfig {
   shortDescription: string;
   features: string[];
   qualification: string;
+  tts_enabled?: boolean;
 }
 
 export interface PaygTierConfig {
@@ -147,9 +148,11 @@ export const DEFAULT_PRICING_CONFIG: PricingConfiguration = {
       'Resets daily at midnight UTC',
       'No credit card required',
       'No participant limits during free usage',
-      'All core translation features'
+      'All core translation features',
+      'Text-to-Speech (TTS) enabled'
     ],
-    qualification: 'Available for Zoom Pro, Business, and Enterprise accounts only'
+    qualification: 'Available for Zoom Pro, Business, and Enterprise accounts only',
+    tts_enabled: true
   },
 
   paygTiers: {

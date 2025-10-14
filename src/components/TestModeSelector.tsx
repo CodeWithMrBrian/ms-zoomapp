@@ -1,7 +1,7 @@
 import { MOCK_SESSION_DETAIL } from '../utils/mockSessionDetails';
 import { MOCK_SESSION_ACTIVE } from '../utils/mockData';
 import React, { useState } from 'react';
-import { LANGUAGES } from '../utils/constants';
+import { LANGUAGES, PRICING_TIERS } from '../utils/constants';
 import { pricingConfig } from '../utils/pricingManager';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
@@ -373,12 +373,12 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <div className="font-semibold text-gray-900 dark:text-gray-100">
-                        Pay-As-You-Go (Starter)
+                        {`Pay-As-You-Go (${PRICING_TIERS['starter'].name})`}
                       </div>
-                      <Badge variant="info">$45/hr</Badge>
+                      <Badge variant="info">{pricingConfig.formatHourlyRate(PRICING_TIERS['starter'].price_per_hour)}</Badge>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      1 translation (2 total languages) • Pay per hour • No commitment
+                      {pricingConfig.formatLanguageLimitsDescription(PRICING_TIERS['starter'].translation_limit, PRICING_TIERS['starter'].total_language_limit)} • Pay per hour • No commitment
                     </p>
                   </div>
                 </label>
@@ -400,12 +400,12 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <div className="font-semibold text-gray-900 dark:text-gray-100">
-                        Pay-As-You-Go (Professional)
+                        {`Pay-As-You-Go (${PRICING_TIERS['professional'].name})`}
                       </div>
-                      <Badge variant="success">$75/hr</Badge>
+                      <Badge variant="success">{pricingConfig.formatHourlyRate(PRICING_TIERS['professional'].price_per_hour)}</Badge>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      5 translations (6 total languages) • Pay per hour • No commitment
+                      {pricingConfig.formatLanguageLimitsDescription(PRICING_TIERS['professional'].translation_limit, PRICING_TIERS['professional'].total_language_limit)} • Pay per hour • No commitment
                     </p>
                   </div>
                 </label>
@@ -427,14 +427,14 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <div className="font-semibold text-gray-900 dark:text-gray-100">
-                        Pay-As-You-Go (Enterprise)
+                        {`Pay-As-You-Go (${PRICING_TIERS['enterprise'].name})`}
                       </div>
                       <Badge variant="neutral" className="bg-purple-600 text-white border-purple-600">
-                        $105/hr
+                        {pricingConfig.formatHourlyRate(PRICING_TIERS['enterprise'].price_per_hour)}
                       </Badge>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      15 translations (16 total languages) • Pay per hour • No commitment
+                      {pricingConfig.formatLanguageLimitsDescription(PRICING_TIERS['enterprise'].translation_limit, PRICING_TIERS['enterprise'].total_language_limit)} • Pay per hour • No commitment
                     </p>
                   </div>
                 </label>

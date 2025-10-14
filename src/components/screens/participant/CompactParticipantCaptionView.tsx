@@ -3,7 +3,7 @@ import { Card, CardContent } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { useSession } from '../../../context/SessionContext';
-import { useUser } from '../../../context/UserContext';
+// User context no longer needed - TTS available for all tiers
 import { useZoom } from '../../../context/ZoomContext';
 import { LANGUAGES } from '../../../utils/constants';
 import { Caption } from '../../../types';
@@ -46,8 +46,28 @@ export function CompactParticipantCaptionView({
   onChangeLanguage,
   onLeave
 }: CompactParticipantCaptionViewProps) {
+  // Add a ref for the top of the page
+  const topPageRef = useRef<HTMLDivElement | null>(null);
+  
   const { session, captions = [], currentCaption } = useSession();
-  const { isDailyFreeTier } = useUser();
+  
+  // Focus the top of the page on mount and set window title
+  useEffect(() => {
+    if (topPageRef.current) {
+      topPageRef.current.focus();
+    }
+    
+    // Set meaningful window title showing current page context
+    const originalTitle = document.title;
+    const meetingTitle = session?.meeting_title || 'Meeting';
+    document.title = `Live Translation View - ${meetingTitle} | MeetingSync`;
+    
+    // Restore original title on cleanup
+    return () => {
+      document.title = originalTitle;
+    };
+  }, [session?.meeting_title]);
+  // Free tier now has access to all TTS features as per pricing configuration
   const zoomContext = useZoom();
   
   // Compact States
@@ -408,7 +428,7 @@ export function CompactParticipantCaptionView({
       setTtsState((prev: TTSState) => ({ ...prev, isPlaying: false }));
       setCurrentlyPlaying(null);
     }
-  }, [ttsState.isPlaying, ttsState.isAvailable, isDailyFreeTier, currentCaption, filteredCaptions, zoomContext, ttsState.originalAudioLevel, ttsState.volume]);
+  }, [ttsState.isPlaying, ttsState.isAvailable, currentCaption, filteredCaptions, zoomContext, ttsState.originalAudioLevel, ttsState.volume]);
 
   const handleVolumeChange = useCallback((volume: number) => {
     setTtsState((prev: TTSState) => ({ ...prev, volume }));
@@ -431,7 +451,7 @@ export function CompactParticipantCaptionView({
 
   // Handle individual caption playback
   const handleCaptionToggle = useCallback((captionId: string, text: string) => {
-    if (isDailyFreeTier || !ttsState.isAvailable) return;
+    if (!ttsState.isAvailable) return;
     
     if (currentlyPlaying === captionId) {
       setCurrentlyPlaying(null);
@@ -441,7 +461,7 @@ export function CompactParticipantCaptionView({
       console.log('[TTS] Playing caption:', text);
       // In real implementation, this would synthesize and play the specific text
     }
-  }, [currentlyPlaying, isDailyFreeTier, ttsState.isAvailable]);
+  }, [currentlyPlaying, ttsState.isAvailable]);
 
   // Auto-scroll to latest caption
   useEffect(() => {
@@ -512,10 +532,20 @@ export function CompactParticipantCaptionView({
 
   return (
     <div 
+      ref={topPageRef}
+      tabIndex={-1}
+      style={{ outline: 'none' }}
       className="h-full flex flex-col bg-gray-50 dark:bg-gray-900"
       role="region"
       aria-label="Translation captions"
     >
+      {/* Page Title Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Live Translation View</h1>
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+          {getLanguageName(selectedLanguage)} translation
+        </p>
+      </div>
       {/* Compact Header */}
       <header className="bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-700 dark:to-cyan-700 p-3 flex items-center justify-between">
         <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -582,8 +612,8 @@ export function CompactParticipantCaptionView({
               onClick={handleTTSToggle}
               disabled={!session?.tts_enabled}
               className="flex items-center gap-1 text-xs"
-              aria-label={isDailyFreeTier ? 'Upgrade to use text-to-speech' : (ttsState.isPlaying ? 'Pause text-to-speech' : 'Play text-to-speech')}
-              title={isDailyFreeTier ? 'Upgrade for TTS' : `${ttsState.isPlaying ? 'Pause' : 'Play'} TTS (Ctrl+P)`}
+              aria-label={ttsState.isPlaying ? 'Pause text-to-speech' : 'Listen to text-to-speech'}
+              title={`${ttsState.isPlaying ? 'Pause' : 'Listen'} TTS (Ctrl+P)`}
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 {ttsState.isPlaying ? (
@@ -592,7 +622,7 @@ export function CompactParticipantCaptionView({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h2l7-7V5l-7 7z" />
                 )}
               </svg>
-              {isDailyFreeTier ? 'Upgrade' : (ttsState.isPlaying ? 'Pause' : 'Play')}
+              {ttsState.isPlaying ? 'Pause' : 'Listen'}
             </Button>
 
             <select
@@ -607,16 +637,16 @@ export function CompactParticipantCaptionView({
             </select>
           </div>
 
-          {/* Audio Mixing Controls (Only for paid users) */}
-          {!isDailyFreeTier && ttsState.isAvailable && (
+          {/* Audio Mixing Controls */}
+          {ttsState.isAvailable && (
             <div className="space-y-2">
               <div className="text-xs text-gray-600 dark:text-gray-300 font-medium">Audio Mix</div>
               
-              {/* TTS Volume */}
+              {/* Translation Voice Volume */}
               <div className="flex items-center gap-2">
-                <label className="text-xs text-gray-700 dark:text-gray-300 w-8" htmlFor="tts-volume">TTS</label>
+                <label className="text-xs text-gray-700 dark:text-gray-300 w-8" htmlFor="trans-volume">Trans</label>
                 <input
-                  id="tts-volume"
+                  id="trans-volume"
                   type="range"
                   min="0"
                   max="1"
@@ -624,26 +654,26 @@ export function CompactParticipantCaptionView({
                   value={ttsState.volume}
                   onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
                   className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                  aria-label="TTS volume"
+                  aria-label="Translation voice volume"
                 />
                 <span className="text-xs text-gray-700 dark:text-gray-300 w-8 text-right" aria-live="polite">
                   {Math.round(ttsState.volume * 100)}%
                 </span>
               </div>
 
-              {/* Original Zoom Audio Level */}
+              {/* Original Meeting Audio Level */}
               <div className="flex items-center gap-2">
-                <label className="text-xs text-gray-700 dark:text-gray-300 w-8" htmlFor="original-volume">Orig</label>
+                <label className="text-xs text-gray-700 dark:text-gray-300 w-8" htmlFor="orig-volume">Orig</label>
                 <input
-                  id="original-volume"
+                  id="orig-volume"
                   type="range"
                   min="0"
                   max="1"
                   step="0.1"
                   value={ttsState.originalAudioLevel}
                   onChange={(e) => handleOriginalAudioChange(parseFloat(e.target.value))}
-                  className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  aria-label="Original audio level"
+                  className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  aria-label="Original meeting audio level"
                 />
                 <span className="text-xs text-gray-700 dark:text-gray-300 w-8 text-right" aria-live="polite">
                   {Math.round(ttsState.originalAudioLevel * 100)}%
@@ -651,17 +681,12 @@ export function CompactParticipantCaptionView({
               </div>
 
               <div className="text-xs text-gray-600 dark:text-gray-400" role="status">
-                Original audio {ttsState.isPlaying ? 'lowered' : 'normal'} during TTS
+                Original audio {ttsState.isPlaying ? 'lowered' : 'normal'} during translation playback
               </div>
             </div>
           )}
 
-          {/* Free Tier Message */}
-          {isDailyFreeTier && (
-            <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded p-2">
-              Upgrade for audio translation and mixing controls
-            </div>
-          )}
+          {/* Audio translation and mixing controls are now available for all tiers */}
         </div>
       )}
 
@@ -744,12 +769,12 @@ export function CompactParticipantCaptionView({
                     )}
                     
                     {/* Individual Play Button */}
-                    {!isDailyFreeTier && ttsState.isAvailable && (
+                    {ttsState.isAvailable && (
                       <button
                         onClick={() => handleCaptionToggle(caption.id, caption.text)}
                         className="p-0.5 text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 transition-colors focus:outline-none focus:ring-1 focus:ring-teal-500 focus:ring-offset-1 rounded"
-                        aria-label={currentlyPlaying === caption.id ? 'Stop playing caption' : 'Play caption'}
-                        title={currentlyPlaying === caption.id ? 'Stop TTS' : 'Play with TTS'}
+                        aria-label={currentlyPlaying === caption.id ? 'Stop listening to caption' : 'Listen to caption'}
+                        title={currentlyPlaying === caption.id ? 'Stop TTS' : 'Listen with TTS'}
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                           {currentlyPlaying === caption.id ? (

@@ -10,6 +10,7 @@ import type {
   Participant,
   Caption
 } from '../types';
+import { PRICING_TIERS } from './constants';
 
 // ============================================
 // MOCK USERS
@@ -21,7 +22,7 @@ export const MOCK_USER_PAYG_STARTER: User = {
   email: 'john.starter@company.com',
   zoom_account_type: 2, // Licensed (Pro account)
   billing_type: 'payg',
-  subscription_tier: 'starter', // PAYG Starter tier ($45/hr, 1 translation = 2 total languages)
+  subscription_tier: 'starter', // PAYG Starter tier (see PRICING_TIERS for current rate and limits)
   unpaid_usage: 15.75, // Current month usage (postpaid)
   payment_method: 'Visa ****1234',
   payment_method_added: true,
@@ -38,7 +39,7 @@ export const MOCK_USER_PAYG_PROFESSIONAL: User = {
   email: 'john.professional@company.com',
   zoom_account_type: 2, // Licensed (Pro account)
   billing_type: 'payg',
-  subscription_tier: 'professional', // PAYG Professional tier ($75/hr, 5 translations = 6 total languages)
+  subscription_tier: 'professional', // PAYG Professional tier (see PRICING_TIERS for current rate and limits)
   unpaid_usage: 23.50, // Current month usage (postpaid)
   payment_method: 'Visa ****1234',
   payment_method_added: true,
@@ -55,7 +56,7 @@ export const MOCK_USER_PAYG_ENTERPRISE: User = {
   email: 'john.enterprise@company.com',
   zoom_account_type: 2, // Licensed (Pro account)
   billing_type: 'payg',
-  subscription_tier: 'enterprise', // PAYG Enterprise tier ($105/hr, 15 translations = 16 total languages)
+  subscription_tier: 'enterprise', // PAYG Enterprise tier (see PRICING_TIERS for current rate and limits)
   unpaid_usage: 47.50, // Current month usage (postpaid)
   payment_method: 'Visa ****1234',
   payment_method_added: true,
@@ -155,7 +156,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 12,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 112.50, // 1.5 hours * $75/hr
+  cost: 1.5 * PRICING_TIERS['professional'].price_per_hour, // 1.5 hours * current professional rate
     status: 'ended',
     transcript_url: 'https://cdn.meetingsync.com/transcripts/session_001.pdf',
     created_at: '2025-10-09T10:30:00Z'
@@ -177,7 +178,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 3,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 56.25, // 0.75 hours * $75/hr
+  cost: 0.75 * PRICING_TIERS['professional'].price_per_hour, // 0.75 hours * current professional rate
     status: 'ended',
     transcript_url: 'https://cdn.meetingsync.com/transcripts/session_002.pdf',
     created_at: '2025-10-07T14:00:00Z'
@@ -200,7 +201,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 38,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 150.00, // 2.0 hours * $75/hr
+  cost: 2.0 * PRICING_TIERS['professional'].price_per_hour, // 2.0 hours * current professional rate
     status: 'ended',
     transcript_url: 'https://cdn.meetingsync.com/transcripts/session_003.pdf',
     created_at: '2025-10-05T09:00:00Z'
@@ -221,7 +222,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 6,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 131.25, // 1.75 hours * $75/hr
+  cost: 1.75 * PRICING_TIERS['professional'].price_per_hour, // 1.75 hours * current professional rate
     status: 'ended',
     created_at: '2025-10-03T15:30:00Z'
   },
@@ -241,7 +242,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 15,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 112.50, // 1.5 hours * $75/hr
+  cost: 1.5 * PRICING_TIERS['professional'].price_per_hour, // 1.5 hours * current professional rate
     status: 'ended',
     created_at: '2025-10-01T13:00:00Z'
   },
@@ -261,7 +262,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 9,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 93.75, // 1.25 hours * $75/hr
+  cost: 1.25 * PRICING_TIERS['professional'].price_per_hour, // 1.25 hours * current professional rate
     status: 'ended',
     created_at: '2025-09-28T10:00:00Z'
   },
@@ -281,7 +282,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 12,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 112.50, // 1.5 hours * $75/hr
+  cost: 1.5 * PRICING_TIERS['professional'].price_per_hour, // 1.5 hours * current professional rate
     status: 'ended',
     created_at: '2025-09-25T16:00:00Z'
   },
@@ -301,7 +302,7 @@ export const MOCK_SESSIONS: Session[] = [
     participant_count_viewing: 78,
     tier: 'professional',
     billing_type: 'payg',
-    cost: 75.00, // 1.0 hours * $75/hr
+  cost: 1.0 * PRICING_TIERS['professional'].price_per_hour, // 1.0 hours * current professional rate
     status: 'ended',
     created_at: '2025-09-22T11:00:00Z'
   }

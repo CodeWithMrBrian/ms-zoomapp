@@ -1,5 +1,7 @@
 // React import not needed for component
 import { Button, Card, Badge } from '../../ui';
+import { PRICING_TIERS } from '../../../utils/constants';
+import { pricingConfig } from '../../../utils/pricingManager';
 
 export interface FreeTrialActivatedScreenProps {
   onStartSession: () => void;
@@ -48,7 +50,7 @@ export function FreeTrialActivatedScreen({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Daily allowance</span>
-                <Badge variant="success">15 minutes/day</Badge>
+                <Badge variant="success">{`${pricingConfig.getFreeTierMinutes()} minutes/day`}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Resets</span>
@@ -59,7 +61,7 @@ export function FreeTrialActivatedScreen({
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Languages</span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  1 translation (2 total)
+                  {`${pricingConfig.getFreeTierLanguageLimits().translations} translation (${pricingConfig.getFreeTierLanguageLimits().total} total)`}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -85,37 +87,30 @@ export function FreeTrialActivatedScreen({
 
             {/* PAYG Tiers */}
             <div className="space-y-2">
-              {/* Starter */}
-              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Starter</h3>
-                  <span className="text-sm font-bold text-teal-600 dark:text-teal-400">$45/hr</span>
-                </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">1 translation (2 total languages) • No commitment</p>
-              </div>
-
-              {/* Professional */}
-              <div className="bg-gradient-to-br from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 rounded-lg p-3 border-2 border-teal-300 dark:border-teal-700">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Professional</h3>
-                    <Badge variant="neutral" className="bg-teal-600 text-white border-teal-600 text-xs">
-                      Popular
-                    </Badge>
+              {/* PAYG Tiers - dynamically rendered */}
+              {Object.values(PRICING_TIERS).map((tier: any) => (
+                <div
+                  key={tier.id}
+                  className={`rounded-lg p-3 border ${
+                    tier.id === 'professional'
+                      ? 'bg-gradient-to-br from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 border-2 border-teal-300 dark:border-teal-700'
+                      : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">{tier.name}</h3>
+                      {tier.recommended && (
+                        <Badge variant="neutral" className="bg-teal-600 text-white border-teal-600 text-xs">
+                          Popular
+                        </Badge>
+                      )}
+                    </div>
+                    <span className="text-sm font-bold text-teal-600 dark:text-teal-400">{pricingConfig.formatHourlyRate(tier.price_per_hour)}</span>
                   </div>
-                  <span className="text-sm font-bold text-teal-600 dark:text-teal-400">$75/hr</span>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">{pricingConfig.formatLanguageLimitsDescription(tier.translation_limit, tier.total_language_limit)} • No commitment</p>
                 </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">5 translations (6 total languages) • No commitment</p>
-              </div>
-
-              {/* Enterprise */}
-              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Enterprise</h3>
-                  <span className="text-sm font-bold text-teal-600 dark:text-teal-400">$105/hr</span>
-                </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">15 translations (16 total languages) • No commitment</p>
-              </div>
+              ))}
             </div>
 
             {/* No Surprise Charges */}

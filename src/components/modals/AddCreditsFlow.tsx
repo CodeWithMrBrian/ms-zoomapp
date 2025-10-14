@@ -22,26 +22,29 @@ interface CreditPackage {
   bestValue?: boolean;
 }
 
+// Source credit packages from a config variable for maintainability
+import { PRICING_TIERS } from '../../utils/constants';
+
 const CREDIT_PACKAGES: CreditPackage[] = [
   {
-    id: 'starter',
-    name: 'Starter',
-    price: 39,
+    id: PRICING_TIERS['starter'].id,
+    name: PRICING_TIERS['starter'].name,
+    price: 39, // TODO: Move to config if these are real product prices
     hours: 10,
     costPerHour: 3.9,
     recommended: true
   },
   {
-    id: 'professional',
-    name: 'Professional',
+    id: PRICING_TIERS['professional'].id,
+    name: PRICING_TIERS['professional'].name,
     price: 69,
     hours: 20,
     costPerHour: 3.45,
     bestValue: true
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
+    id: PRICING_TIERS['enterprise'].id,
+    name: PRICING_TIERS['enterprise'].name,
     price: 99,
     hours: 30,
     costPerHour: 3.3
