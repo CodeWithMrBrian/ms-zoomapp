@@ -9,7 +9,7 @@ import { ConfirmationModal } from '../ui/ConfirmationModal';
 import { MOCK_GLOSSARIES } from '../../utils/mockData';
 
 export interface GlossaryEditPageProps {
-// ...existing code...
+  glossaryId: string;
   onBack: () => void;
 }
 

@@ -17,7 +17,7 @@ export interface GlossaryExportModalProps {
  *
  * Simple modal for exporting glossary terms with format options.
  */
-export function GlossaryExportModal({ isOpen, onClose, glossaryId, glossaryName }: GlossaryExportModalProps) {
+export function GlossaryExportModal({ isOpen, onClose, glossaryId: _glossaryId, glossaryName }: GlossaryExportModalProps) {
   const { toast, showToast } = useToast();
   const [format, setFormat] = useState<'csv' | 'excel' | 'json'>('csv');
   const [includeMetadata, setIncludeMetadata] = useState(true);

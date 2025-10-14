@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Badge } from './ui';
+
+
 
 export type ScenarioType = 'active' | 'near-limit' | 'limit-reached' | 'payment-processing' | 'just-upgraded' | 'renewal-due';
 

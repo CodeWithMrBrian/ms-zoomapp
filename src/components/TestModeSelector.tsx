@@ -41,7 +41,6 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
   const [role, setRole] = useState<TestRole>('host');
 
   // Selected languages for Participant view
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
 
   // Helper: Get allowed language count for current accountType
   function getAllowedLanguageCount(accountType: TestAccountType): number {
@@ -56,22 +55,11 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
     return 0;
   }
 
-  // Helper: Get most popular languages (in LANGUAGES order)
-  function getPopularLanguages(count: number): string[] {
-    // Always include English if present
-    const base = LANGUAGES.map(l => l.code);
-    // Shuffle except English (keep English first if present)
-    const [en, ...rest] = base[0] === 'en' ? [base[0], ...base.slice(1)] : [null, ...base];
-    const shuffled = rest.sort(() => 0.5 - Math.random());
-    const result = (en ? [en] : []).concat(shuffled).slice(0, count);
-    return result;
-  }
-
   // Effect: When role/accountType changes to Participant, auto-select languages
   React.useEffect(() => {
     if (role === 'participant') {
-      const count = getAllowedLanguageCount(accountType);
-      setSelectedLanguages(getPopularLanguages(count));
+      // Auto-select appropriate number of languages based on account type
+      getAllowedLanguageCount(accountType);
     }
   }, [role, accountType]);
 

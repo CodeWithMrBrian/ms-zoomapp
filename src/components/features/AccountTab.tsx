@@ -226,7 +226,7 @@ export function AccountTab({ onAddPaymentMethod }: AccountTabProps = {}) {
               {/* Plan Features */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <ul className="space-y-2 text-sm">
-                  {PRICING_TIERS[user.subscription_tier].features.map((feature, index) => (
+                  {PRICING_TIERS[user.subscription_tier].features.map((feature: string, index: number) => (
                     <li key={index} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                       <span className="text-teal-600 dark:text-teal-400">✓</span>
                       <span>{feature}</span>

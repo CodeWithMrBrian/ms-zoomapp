@@ -1,4 +1,6 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+
+
+import { useState, useEffect, ReactNode } from 'react';
 
 /**
  * ZoomAppContainer
@@ -8,10 +10,9 @@ import React, { useState, useEffect, ReactNode } from 'react';
  * (minus the Zoom window controls at the top).
  *
  * Width constraints (based on Zoom screenshot analysis):
- * - Windows: 480px (default, matches Zoom Windows client)
- * - Mac: 450px (typical Mac sidebar width)
- * - Tablet: 400px (testing smaller screens)
- * - Desktop: 520px (testing larger screens)
+ * - Windows: 480px typical, 450px minimum
+ * - Mac: 450px typical, 400px minimum
+ * - Tablet/mobile: 400px
  *
  * Height: Full screen minus ~40px for Zoom window title bar
  * Scrollbar: 16px wide, visible on right edge (matches Windows Zoom client)

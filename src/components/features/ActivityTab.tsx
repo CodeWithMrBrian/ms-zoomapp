@@ -1,10 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Select } from '../ui/Select';
 import { Input } from '../ui/Input';
 import { Badge } from '../ui/Badge';
-import { ProgressBar } from '../ui/ProgressBar';
 import { useUser } from '../../context/UserContext';
 import { MOCK_SESSIONS } from '../../utils/mockData';
 import { LANGUAGES } from '../../utils/constants';
@@ -30,7 +29,7 @@ import { ExportDataModal } from '../modals/ExportDataModal';
 type ActivityView = 'main' | 'session-detail';
 
 export function ActivityTab() {
-  const { user, usagePercentage } = useUser();
+  const { user } = useUser();
 
   const [currentView, setCurrentView] = useState<ActivityView>('main');
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
@@ -79,17 +78,7 @@ export function ActivityTab() {
   }, [dateFrom, dateTo, meetingTypeFilter, languageFilter, searchQuery]);
 
   // Calculate totals (must be before conditional return)
-  const totalHours = useMemo(() => {
-    return filteredSessions.reduce((sum, session) => sum + (session.duration_hours || 0), 0);
-  }, [filteredSessions]);
-
-  const totalCost = useMemo(() => {
-    return filteredSessions.reduce((sum, session) => sum + session.cost, 0);
-  }, [filteredSessions]);
-
-  const totalParticipants = useMemo(() => {
-    return filteredSessions.reduce((sum, session) => sum + session.participant_count_total, 0);
-  }, [filteredSessions]);
+  // Remove unused totals for now
 
   // Render session detail page (conditional return AFTER all hooks)
   if (currentView === 'session-detail' && selectedSessionId) {
@@ -109,11 +98,10 @@ export function ActivityTab() {
   // Get status badge
   const getStatusBadge = (status: SessionStatus) => {
     const variants: Record<SessionStatus, 'success' | 'warning' | 'error' | 'info'> = {
+      not_started: 'info',
       active: 'success',
       paused: 'warning',
-      ended: 'info',
-      failed: 'error',
-      cancelled: 'error'
+      ended: 'info'
     };
     return <Badge variant={variants[status]}>{status.toUpperCase()}</Badge>;
   };

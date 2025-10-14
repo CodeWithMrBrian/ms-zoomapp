@@ -26,7 +26,10 @@ export const MOCK_USER_PAYG_STARTER: User = {
   payment_method: 'Visa ****1234',
   payment_method_added: true,
   billing_period_start: '2025-10-01',
-  billing_period_end: '2025-10-31'
+  billing_period_end: '2025-10-31',
+  is_free_trial_active: false,
+  free_trial_sessions_remaining: 0,
+  free_trial_sessions_used: 3
 };
 
 export const MOCK_USER_PAYG_PROFESSIONAL: User = {
@@ -40,7 +43,10 @@ export const MOCK_USER_PAYG_PROFESSIONAL: User = {
   payment_method: 'Visa ****1234',
   payment_method_added: true,
   billing_period_start: '2025-10-01',
-  billing_period_end: '2025-10-31'
+  billing_period_end: '2025-10-31',
+  is_free_trial_active: false,
+  free_trial_sessions_remaining: 0,
+  free_trial_sessions_used: 3
 };
 
 export const MOCK_USER_PAYG_ENTERPRISE: User = {
@@ -54,7 +60,29 @@ export const MOCK_USER_PAYG_ENTERPRISE: User = {
   payment_method: 'Visa ****1234',
   payment_method_added: true,
   billing_period_start: '2025-10-01',
-  billing_period_end: '2025-10-31'
+  billing_period_end: '2025-10-31',
+  is_free_trial_active: false,
+  free_trial_sessions_remaining: 0,
+  free_trial_sessions_used: 3
+}
+
+// Add a mock free trial user
+export const MOCK_USER_FREE_TRIAL: User = {
+  id: 'user_free_trial_001',
+  name: 'Jane FreeTrial',
+  email: 'jane.freetrial@company.com',
+  zoom_account_type: 2,
+  billing_type: 'payg',
+  subscription_tier: undefined,
+  unpaid_usage: 0,
+  payment_method: undefined,
+  payment_method_added: false,
+  billing_period_start: '2025-10-01',
+  billing_period_end: '2025-10-31',
+  is_free_trial_active: true,
+  free_trial_sessions_remaining: 2,
+  free_trial_sessions_used: 1,
+  is_free_tier: false
 };
 
 // PAYG user with payment method but no tier selected (tier selection state)
@@ -92,7 +120,6 @@ export const MOCK_USER_FREE_TIER: User = {
 };
 
 // Backward compatibility alias
-export const MOCK_USER_FREE_TRIAL = MOCK_USER_FREE_TIER;
 
 // REMOVED: Subscription billing type no longer supported (PAYG-only model)
 

@@ -9,7 +9,7 @@ import { Badge } from '../ui/Badge';
 export interface GlossaryImportModalProps {
   isOpen: boolean;
   onClose: () => void;
-// ...existing code...
+  glossaryId?: string;
 }
 
 // Mock preview data

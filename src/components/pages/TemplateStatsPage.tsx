@@ -8,7 +8,7 @@ import { MOCK_TEMPLATES } from '../../utils/mockData';
 import { getLanguageByCode } from '../../utils/constants';
 
 export interface TemplateStatsPageProps {
-// ...existing code...
+  templateId: string;
   onBack: () => void;
 }
 

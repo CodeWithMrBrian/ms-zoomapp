@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
 import { Badge } from '../ui/Badge';
 import { MOCK_GLOSSARIES } from '../../utils/mockData';
 import { Glossary } from '../../types';
@@ -39,11 +38,7 @@ export function GlossariesTab() {
     setCurrentView('edit');
   };
 
-  // Navigate to create new
-  const handleCreateGlossary = () => {
-    setSelectedGlossaryId('new');
-    setCurrentView('edit');
-  };
+  // (Removed unused handleCreateGlossary)
 
   // Back to main view
   const handleBackToMain = () => {

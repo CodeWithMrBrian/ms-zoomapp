@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { ZoomProvider, useZoom } from './context/ZoomContext';
 import { UserProvider, useUser } from './context/UserContext';
@@ -5,15 +6,9 @@ import { SessionProvider, useSession } from './context/SessionContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Card, CardContent } from './components/ui/Card';
 import { Button } from './components/ui/Button';
-
-// Test Mode Selector
-import { TestModeSelector, TestModeConfig } from './components/TestModeSelector';
-import { ZoomAppContainer } from './components/ZoomAppContainer';
-
-// Screens
-import { HostSetup } from './components/screens/host/HostSetup';
-import { HostActive } from './components/screens/host/HostActive';
 import { HostSettings } from './components/screens/host/HostSettings';
+import { HostActive } from './components/screens/host/HostActive';
+import { HostSetup } from './components/screens/host/HostSetup';
 import { SessionSummary } from './components/screens/host/SessionSummary';
 import { ParticipantLanguageSelect } from './components/screens/participant/ParticipantLanguageSelect';
 import { CompactParticipantCaptionView } from './components/screens/participant/CompactParticipantCaptionView';
@@ -21,13 +16,15 @@ import { ParticipantError, ParticipantErrorType } from './components/screens/par
 import { OAuthSSOScreen } from './components/screens/oauth/OAuthSSOScreen';
 import { WelcomeScreen } from './components/screens/oauth/WelcomeScreen';
 import { FreeTrialActivatedScreen } from './components/screens/oauth/FreeTrialActivatedScreen';
-
-// Modals
 import { TierSelectionModal } from './components/screens/modals/TierSelectionModal';
 import { UsageWarningModal, UsageWarningType } from './components/screens/modals/UsageWarningModal';
 import { AddPaymentMethodModal } from './components/screens/modals/AddPaymentMethodModal';
 import { ManagePaymentMethodModal } from './components/screens/modals/ManagePaymentMethodModal';
 import { SubscriptionTier } from './types';
+import { TestModeSelector } from './components/TestModeSelector';
+import { ZoomAppContainer } from './components/ZoomAppContainer';
+import type { TestModeConfig } from './components/TestModeSelector';
+
 
 /**
  * MeetingSync Zoom App - Main Application
@@ -66,60 +63,43 @@ interface AppContentProps {
   testMode?: TestModeConfig | null;
 }
 
-function AppContent({ testMode }: AppContentProps) {
+function AppContent(props: AppContentProps): React.ReactElement | null {
+  const testMode = props.testMode;
   const { isConnected, isLoading, error: zoomError, userContext } = useZoom();
   const { user, setPaymentMethodAdded } = useUser();
   const { isActive } = useSession();
 
   // Screen state
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('loading');
-  const [previousScreen, setPreviousScreen] = useState<AppScreen | null>(null);
-  const [participantLanguage, setParticipantLanguage] = useState<string | null>(null);
-  const [participantErrorType, setParticipantErrorType] = useState<ParticipantErrorType>('no_session');
-  const [hasInitialized, setHasInitialized] = useState(false);
+    const [currentScreen, setCurrentScreen] = useState<AppScreen>('loading');
+    const [previousScreen, setPreviousScreen] = useState<AppScreen | null>(null);
+    const [participantLanguage, setParticipantLanguage] = useState<string | null>(null);
+    const [participantErrorType, setParticipantErrorType] = useState<ParticipantErrorType>('no_session');
+    const [hasInitialized, setHasInitialized] = useState(false);
   const [isViewingAsParticipant, setIsViewingAsParticipant] = useState(false); // Track if host is viewing as participant
 
   // Modal state
   const [showTierModal, setShowTierModal] = useState(false);
   const [tierModalContext, setTierModalContext] = useState<'upgrade' | 'initial' | 'language_limit'>('initial');
   const [showUsageWarningModal, setShowUsageWarningModal] = useState(false);
-  const [usageWarningType, setUsageWarningType] = useState<UsageWarningType>('high_usage');
+  const [usageWarningType] = useState<UsageWarningType>('high_usage');
   const [showAddPaymentMethodModal, setShowAddPaymentMethodModal] = useState(false);
   const [showManagePaymentMethodModal, setShowManagePaymentMethodModal] = useState(false);
   const [paymentModalContext, setPaymentModalContext] = useState<'add' | 'update'>('add');
-  const [selectedTierForPayment, setSelectedTierForPayment] = useState<SubscriptionTier>('professional');
+  // Removed selectedTierForPayment
 
   // Determine if user is host
   const isHost = userContext?.role === 'host' || userContext?.role === 'cohost';
 
   // Scroll to top when screen changes (UX improvement)
   useEffect(() => {
-    const scrollableContainer = document.querySelector('.overflow-y-auto');
-    const scrollTarget = scrollableContainer || window;
-    
     // Exceptions: Don't scroll to top for these screen transitions
     const noScrollScreens = [
       'loading', // Initial load
       'participant-caption-view' // Captions should maintain scroll position for user experience
     ];
-    
-    if (!noScrollScreens.includes(currentScreen)) {
-      // Use requestAnimationFrame to ensure DOM is updated before scrolling
-      requestAnimationFrame(() => {
-        if (scrollableContainer) {
-          scrollableContainer.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      });
-    }
-  }, [currentScreen]);
 
-  // Initial screen routing
-  useEffect(() => {
-    if (isLoading) {
-      setCurrentScreen('loading');
-      return;
+    if (!noScrollScreens.includes(currentScreen)) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Only show error if there's an actual error message
@@ -168,6 +148,7 @@ function AppContent({ testMode }: AppContentProps) {
   }, [isLoading, zoomError, isConnected, isHost, isActive, participantLanguage, testMode, hasInitialized]);
 
   // Host screen handlers
+
   const handleStartSession = () => {
     setCurrentScreen('host-active');
   };
@@ -178,6 +159,7 @@ function AppContent({ testMode }: AppContentProps) {
 
   const handleStartNewSession = () => {
     setCurrentScreen('host-setup');
+    // Removed selectedTierForPayment
   };
 
   const handleReturnToDashboard = () => {
@@ -266,9 +248,6 @@ function AppContent({ testMode }: AppContentProps) {
 
     // Close tier selection modal
     setShowTierModal(false);
-
-    // Store selected tier for payment modal
-    setSelectedTierForPayment(tier);
 
     // If user doesn't have payment method, need to add payment
     if (!user?.payment_method_added) {
@@ -570,7 +549,7 @@ function AppContent({ testMode }: AppContentProps) {
         isOpen={showAddPaymentMethodModal}
         onClose={() => setShowAddPaymentMethodModal(false)}
         onPaymentMethodAdded={handlePaymentMethodAdded}
-        selectedTier={selectedTierForPayment}
+// ...existing code...
         context={paymentModalContext}
       />
 
@@ -583,11 +562,8 @@ function AppContent({ testMode }: AppContentProps) {
   );
 }
 
-/**
- * App Root with Context Providers
- */
 function App() {
-  const [testMode, setTestMode] = useState<TestModeConfig | null>(null);
+  const [testModeState, setTestModeState] = useState<TestModeConfig | null>(null);
   const [showTestSelector, setShowTestSelector] = useState(true);
   const [showStartOverButton, setShowStartOverButton] = useState(true);
 
@@ -619,7 +595,7 @@ function App() {
   }, []);
 
   const handleTestModeStart = (config: TestModeConfig) => {
-    setTestMode(config);
+    setTestModeState(config);
     setShowTestSelector(false);
 
     // Store in sessionStorage so it persists during development
@@ -628,7 +604,7 @@ function App() {
 
   const handleResetToTestMode = () => {
     // Clear test mode and return to selector
-    setTestMode(null);
+    setTestModeState(null);
     setShowTestSelector(true);
     sessionStorage.removeItem('meetingsync-test-mode');
   };
@@ -640,7 +616,7 @@ function App() {
       if (stored) {
         try {
           const config = JSON.parse(stored);
-          setTestMode(config);
+          setTestModeState(config);
           setShowTestSelector(false);
         } catch (e) {
           console.error('Failed to parse stored test mode:', e);
@@ -656,20 +632,20 @@ function App() {
 
   // Map accountType to user type for UserProvider
   const getUserType = (): 'payg' | 'payg-no-tier' | 'payg-starter' | 'payg-professional' | 'payg-enterprise' | 'free' | 'trial' | 'free-tier' | undefined => {
-    if (!testMode) return undefined;
+    if (!testModeState) return undefined;
     // Map TestMode account types to UserProvider types
-    if (testMode.accountType === 'free-tier') return 'free-tier';
-    if (testMode.accountType === 'payg-no-tier') return 'payg-no-tier';
+    if (testModeState.accountType === 'free-tier') return 'free-tier';
+    if (testModeState.accountType === 'payg-no-tier') return 'payg-no-tier';
     // Return exact PAYG tier to load correct mock user
-    return testMode.accountType; // 'payg-starter', 'payg-professional', or 'payg-enterprise'
+    return testModeState.accountType; // 'payg-starter', 'payg-professional', or 'payg-enterprise'
   };
 
   // Wrap in ZoomAppContainer for development mode
   const appContent = (
-    <ZoomProvider testConfig={testMode}>
+    <ZoomProvider testConfig={testModeState}>
       <UserProvider testUserType={getUserType()}>
         <SessionProvider>
-          <AppContent testMode={testMode} />
+          <AppContent testMode={testModeState} />
         </SessionProvider>
       </UserProvider>
     </ZoomProvider>
@@ -697,5 +673,4 @@ function App() {
 
   return <ErrorBoundary>{appContent}</ErrorBoundary>;
 }
-
 export default App;

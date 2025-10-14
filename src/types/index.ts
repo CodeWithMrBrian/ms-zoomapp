@@ -27,6 +27,11 @@ export interface User {
   daily_free_minutes_remaining?: number; // Minutes remaining today (15-0)
   daily_free_reset_date?: string; // ISO date of last reset (YYYY-MM-DD)
   is_free_tier?: boolean; // True if user has no payment method (free tier forever)
+
+  // Free Trial fields
+  is_free_trial_active?: boolean; // True if user is in free trial
+  free_trial_sessions_remaining?: number; // Sessions left in free trial
+  free_trial_sessions_used?: number; // Sessions used in free trial
 }
 
 export interface BillingStatus {

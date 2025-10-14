@@ -26,7 +26,7 @@ export function Tooltip({
   disabled = false
 }: TooltipProps) {
   const [show, setShow] = useState(false);
-  const [timer, setTimer] = useState<number | null>(null);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
 

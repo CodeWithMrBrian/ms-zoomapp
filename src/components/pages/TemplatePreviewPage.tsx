@@ -9,7 +9,7 @@ import { MOCK_TEMPLATES } from '../../utils/mockData';
 import { getLanguageByCode } from '../../utils/constants';
 
 export interface TemplatePreviewPageProps {
-// ...existing code...
+  templateId: string;
   onBack: () => void;
   onEdit?: () => void;
   onUse?: () => void;

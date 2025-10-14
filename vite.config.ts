@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     host: true, // Allow external connections
     port: 5173,
-    https: true, // Enable HTTPS for local development
+    // https: true, // Commented out for now - can be enabled with proper cert config
     cors: {
       origin: ['https://zoom.us', 'https://*.zoom.us'],
       credentials: true
