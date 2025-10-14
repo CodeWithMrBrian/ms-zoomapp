@@ -242,9 +242,6 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                         <span className="text-gray-600 dark:text-gray-400">Testing specific features quickly</span>
                       </div>
 
-                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3 text-xs text-gray-700 dark:text-gray-300">
-                        <strong>Note:</strong> Scenario status (Near Limit, Limit Reached, etc.) can be adjusted anytime using the Simulation Controls panel.
-                      </div>
 
                       <div className="mt-4">
                         <Button
@@ -267,7 +264,6 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                     <strong>Both paths include:</strong>
                     <ul className="mt-2 space-y-1 ml-4">
                       <li>• Floating "Start Over" button to return here</li>
-                      <li>• Sidebar width selector (Windows/Mac/Tablet/Desktop)</li>
                       <li>• All data is mocked - no backend required</li>
                     </ul>
                   </div>
@@ -507,13 +503,6 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
             </div>
 
             {/* Info Box */}
-            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <strong>Note:</strong> Scenario status (Near Limit, Limit Reached, Just Upgraded, etc.) can be adjusted anytime using the <strong>Simulation Controls panel</strong> on the left side.
-                </p>
-              </div>
-            </div>
 
             {/* Buttons */}
             <div className="flex gap-3">
