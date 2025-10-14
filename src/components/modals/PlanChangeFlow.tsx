@@ -46,7 +46,7 @@ export function PlanChangeFlow({ isOpen, onClose, currentPlan }: PlanChangeFlowP
   const selectedPlanData = PRICING_TIERS[selectedPlan];
 
   const isUpgrade = selectedPlanData.monthly_subscription > currentPlanData.monthly_subscription;
-  const isDowngrade = selectedPlanData.monthly_subscription < currentPlanData.monthly_subscription;
+// ...existing code...
 
   const priceDifference = selectedPlanData.monthly_subscription - currentPlanData.monthly_subscription;
   const proratedAmount = billingOption === 'immediate' ? Math.abs(priceDifference) * 0.5 : 0; // Simplified proration
@@ -178,7 +178,7 @@ export function PlanChangeFlow({ isOpen, onClose, currentPlan }: PlanChangeFlowP
 
                         {/* Features */}
                         <ul className="space-y-2 mb-4 flex-1">
-                          {plan.features.slice(0, 4).map((feature, index) => (
+                          {plan.features.slice(0, 4).map((feature: string, index: number) => (
                             <li key={index} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
                               <svg className="w-5 h-5 text-teal-600 dark:text-teal-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

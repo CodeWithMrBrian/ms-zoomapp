@@ -9,7 +9,7 @@ import { ConfirmationModal } from '../ui/ConfirmationModal';
 import { MOCK_GLOSSARIES } from '../../utils/mockData';
 
 export interface GlossaryEditPageProps {
-  glossaryId: string;
+// ...existing code...
   onBack: () => void;
 }
 
@@ -38,14 +38,14 @@ const MOCK_TERMS: GlossaryTerm[] = [
  *
  * Allows editing glossary details and managing terms with inline editing.
  */
-export function GlossaryEditPage({ glossaryId, onBack }: GlossaryEditPageProps) {
+export function GlossaryEditPage({ onBack }: GlossaryEditPageProps) {
   const { toast, showToast } = useToast();
   const glossary = MOCK_GLOSSARIES[0]; // Using first glossary as editable
 
   const [glossaryName, setGlossaryName] = useState(glossary.name);
   const [glossaryDescription, setGlossaryDescription] = useState('Medical terminology for healthcare professionals');
   const [terms, setTerms] = useState<GlossaryTerm[]>(MOCK_TERMS);
-  const [editingTermId, setEditingTermId] = useState<string | null>(null);
+// ...existing code...
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTerms, setSelectedTerms] = useState<Set<string>>(new Set());
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

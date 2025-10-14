@@ -26,7 +26,7 @@ export interface SessionDetailPageProps {
  * - Participants list
  * - Download options (recording, transcript)
  */
-export function SessionDetailPage({ sessionId, onBack }: SessionDetailPageProps) {
+export function SessionDetailPage({ onBack }: SessionDetailPageProps) {
   const { toast, showToast } = useToast();
   const [selectedTranslationLang, setSelectedTranslationLang] = useState<string>('');
   const [transcriptFormat, setTranscriptFormat] = useState<string>('txt');
@@ -42,9 +42,7 @@ export function SessionDetailPage({ sessionId, onBack }: SessionDetailPageProps)
   ];
 
   // Format time HH:MM
-  const formatTime = (time: string) => {
-    return time;
-  };
+// ...existing code...
 
   // Get confidence badge variant
   const getConfidenceBadge = (confidence: number) => {

@@ -9,7 +9,7 @@ import { Badge } from '../ui/Badge';
 export interface GlossaryImportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  glossaryId: string;
+// ...existing code...
 }
 
 // Mock preview data
@@ -26,7 +26,7 @@ const PREVIEW_ROWS = [
  *
  * 3-step modal flow for importing glossary terms from CSV/Excel.
  */
-export function GlossaryImportModal({ isOpen, onClose, glossaryId }: GlossaryImportModalProps) {
+export function GlossaryImportModal({ isOpen, onClose }: GlossaryImportModalProps) {
   const { toast, showToast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [fileName, setFileName] = useState('');

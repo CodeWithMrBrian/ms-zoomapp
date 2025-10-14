@@ -72,7 +72,7 @@ export function AnalyticsDashboard({ onBack }: AnalyticsDashboardProps) {
 
   // Calculate max values for chart scaling
   const maxUsage = Math.max(...data.usageOverTime.map(d => d.minutes));
-  const maxLanguageCount = Math.max(...data.topLanguages.map(l => l.count));
+// ...existing code...
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">

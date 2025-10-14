@@ -53,7 +53,7 @@ export function SecuritySettingsPage({ onBack }: SecuritySettingsPageProps) {
   const [sessions, setSessions] = useState<ActiveSession[]>(ACTIVE_SESSIONS);
   const [showSignOutAllConfirm, setShowSignOutAllConfirm] = useState(false);
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
-  const [sessionToSignOut, setSessionToSignOut] = useState<string | null>(null);
+// ...existing code...
 
   const breadcrumbItems: BreadcrumbItem[] = [
     { label: 'Home', onClick: onBack },
@@ -63,7 +63,7 @@ export function SecuritySettingsPage({ onBack }: SecuritySettingsPageProps) {
 
   const handleSignOutSession = (sessionId: string) => {
     setSessions(sessions.filter(s => s.id !== sessionId));
-    setSessionToSignOut(null);
+// ...existing code...
     showToast('Session signed out successfully', 'success');
   };
 
