@@ -1,4 +1,4 @@
-import React from 'react';
+// ...existing code...
 
 export interface ProgressIndicatorProps {
   steps: string[];
@@ -27,7 +27,7 @@ export function ProgressIndicator({ steps, currentStep, className = '' }: Progre
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
           const isCurrent = stepNumber === currentStep;
-          const isUpcoming = stepNumber > currentStep;
+// ...existing code...
 
           return (
             <li

@@ -1,12 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
-import { User, SubscriptionTier, BillingType } from '../types';
+import { createContext, useContext, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
+import { User, SubscriptionTier } from '../types';
 import {
-  MOCK_USER_PAYG,
-  MOCK_USER_PAYG_STARTER,
-  MOCK_USER_PAYG_PROFESSIONAL,
-  MOCK_USER_PAYG_ENTERPRISE,
-  MOCK_USER_FREE_ZOOM,
-  MOCK_USER_FREE_TRIAL,
   getMockUserByType
 } from '../utils/mockData';
 

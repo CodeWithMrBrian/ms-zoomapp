@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from 'react';
-import { Session, MeetingType, Participant, Caption, type LanguageOverage } from '../types';
+import { Session, MeetingType, Participant, Caption } from '../types';
 import { MOCK_SESSION_ACTIVE, MOCK_PARTICIPANTS, MOCK_CAPTIONS } from '../utils/mockData';
 import { useUser } from './UserContext';
 import { useZoom } from './ZoomContext';
-import { calculateParticipantMultiplier, calculateSessionCost, PRICING_TIERS } from '../utils/constants';
+import { calculateParticipantMultiplier, PRICING_TIERS } from '../utils/constants';
 
 /**
  * Session Context
