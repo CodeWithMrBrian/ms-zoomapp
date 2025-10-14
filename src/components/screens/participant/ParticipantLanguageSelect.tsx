@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react';
+﻿import { useState, useMemo, useRef, useEffect } from 'react';
 import { useUser } from '../../../context/UserContext';
 import { Card, CardContent } from '../../ui/Card';
 import { Button } from '../../ui/Button';
@@ -6,6 +6,7 @@ import { Input } from '../../ui/Input';
 import { NavigationHeader } from '../../ui/NavigationHeader';
 import { useSession } from '../../../context/SessionContext';
 import { LANGUAGES } from '../../../utils/constants';
+import { pricingConfig } from '../../../utils/pricingManager';
 import RequestLanguageModal from './RequestLanguageModal';
 import { Language } from '../../../types';
 
@@ -23,11 +24,22 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestedLanguages, setRequestedLanguages] = useState<string[]>([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  // Ref for the Free Tier disabled button
+  const freeTierDisabledBtnRef = useRef<HTMLButtonElement | null>(null);
+
   // Get available languages from active session
   const availableLanguages = useMemo(() => {
     if (!session) return [];
-    return LANGUAGES.filter(lang => session.target_languages.includes(lang.code));
-  }, [session]);
+    let maxLanguages = session.target_languages.length;
+    if (isDailyFreeTier) {
+      maxLanguages = pricingConfig.getFreeTierLanguageLimits().total;
+    } else if (session.tier) {
+      // session.tier should be 'starter', 'professional', or 'enterprise'
+      maxLanguages = pricingConfig.getPaygTierLanguageLimits(session.tier).total;
+    }
+    const filtered = LANGUAGES.filter(lang => session.target_languages.includes(lang.code));
+    return filtered.slice(0, maxLanguages);
+  }, [session, isDailyFreeTier]);
 
   // Filter languages based on search
   const filteredLanguages = useMemo(() => {
@@ -38,6 +50,19 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
       lang.code.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [availableLanguages, searchQuery]);
+
+  // Focus the Free Tier disabled button when all languages are selected (Free Tier only)
+  useEffect(() => {
+    if (
+      isDailyFreeTier &&
+      availableLanguages.length > 0 &&
+      selectedLanguage === null &&
+      filteredLanguages.length === 0 &&
+      freeTierDisabledBtnRef.current
+    ) {
+      freeTierDisabledBtnRef.current.focus();
+    }
+  }, [isDailyFreeTier, availableLanguages.length, selectedLanguage, filteredLanguages.length]);
 
   // Handle language selection
   const handleSelectLanguage = (languageCode: string) => {
@@ -239,6 +264,7 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
               variant="outline"
               className="w-full opacity-50 cursor-not-allowed"
               disabled
+              ref={freeTierDisabledBtnRef}
             >
               + Request Different Language (Free tier disabled)
             </Button>

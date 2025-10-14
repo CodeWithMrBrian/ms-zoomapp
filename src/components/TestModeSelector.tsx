@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import { MOCK_SESSION_DETAIL } from '../utils/mockSessionDetails';
+import { MOCK_SESSION_ACTIVE } from '../utils/mockData';
+import React, { useState } from 'react';
+import { LANGUAGES } from '../utils/constants';
+import { pricingConfig } from '../utils/pricingManager';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
 import { Badge } from './ui/Badge';
@@ -36,6 +40,41 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
   const [accountType, setAccountType] = useState<TestAccountType>('payg-starter');
   const [role, setRole] = useState<TestRole>('host');
 
+  // Selected languages for Participant view
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+
+  // Helper: Get allowed language count for current accountType
+  function getAllowedLanguageCount(accountType: TestAccountType): number {
+    if (accountType === 'free-tier') {
+      return pricingConfig.getFreeTierLanguageLimits().total;
+    }
+    if (accountType.startsWith('payg-')) {
+      // Extract tier id (e.g., 'starter', 'professional', 'enterprise')
+      const tierId = accountType.replace('payg-', '');
+      return pricingConfig.getPaygTierLanguageLimits(tierId).total;
+    }
+    return 0;
+  }
+
+  // Helper: Get most popular languages (in LANGUAGES order)
+  function getPopularLanguages(count: number): string[] {
+    // Always include English if present
+    const base = LANGUAGES.map(l => l.code);
+    // Shuffle except English (keep English first if present)
+    const [en, ...rest] = base[0] === 'en' ? [base[0], ...base.slice(1)] : [null, ...base];
+    const shuffled = rest.sort(() => 0.5 - Math.random());
+    const result = (en ? [en] : []).concat(shuffled).slice(0, count);
+    return result;
+  }
+
+  // Effect: When role/accountType changes to Participant, auto-select languages
+  React.useEffect(() => {
+    if (role === 'participant') {
+      const count = getAllowedLanguageCount(accountType);
+      setSelectedLanguages(getPopularLanguages(count));
+    }
+  }, [role, accountType]);
+
   const handlePathSelection = (path: TestPath) => {
     if (path === 'full-journey') {
       // Full journey defaults to daily free tier + host
@@ -52,6 +91,37 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
   };
 
   const handleDirectAccessStart = () => {
+    // Set up correct language pool for Participant
+    if (role === 'participant') {
+      let maxLanguages = 0;
+      if (accountType === 'free-tier') {
+        maxLanguages = pricingConfig.getFreeTierLanguageLimits().total;
+      } else if (accountType.startsWith('payg-')) {
+        const tierId = accountType.replace('payg-', '');
+        maxLanguages = pricingConfig.getPaygTierLanguageLimits(tierId).total;
+      }
+      let selected: string[] = [];
+      if (accountType === 'payg-enterprise') {
+        // For enterprise, select the first 16 unique language codes from LANGUAGES
+        const seen = new Set<string>();
+        for (const lang of LANGUAGES) {
+          if (!seen.has(lang.code)) {
+            seen.add(lang.code);
+            selected.push(lang.code);
+            if (selected.length === maxLanguages) break;
+          }
+        }
+      } else {
+        // For other tiers, pick most popular (always include English if present)
+        const base = LANGUAGES.map(l => l.code);
+        const [en, ...rest] = base[0] === 'en' ? [base[0], ...base.slice(1)] : [null, ...base];
+        const shuffled = rest.sort(() => 0.5 - Math.random());
+        selected = (en ? [en] : []).concat(shuffled).slice(0, maxLanguages);
+      }
+      // Patch the mock session's target_languages for both detail and active session
+      MOCK_SESSION_DETAIL.target_languages = selected;
+      MOCK_SESSION_ACTIVE.target_languages = selected;
+    }
     onStart({
       path: 'direct-access',
       accountType,
@@ -415,18 +485,23 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                   </div>
                 </label>
 
-                <label className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                <label className={`flex items-start gap-3 p-4 border-2 rounded-lg transition-all ${
                   role === 'participant'
                     ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20'
                     : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                }`}>
+                  } ${accountType === 'payg-no-tier' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  aria-disabled={accountType === 'payg-no-tier'}
+                >
                   <input
                     type="radio"
                     name="role"
                     value="participant"
                     checked={role === 'participant'}
-                    onChange={(e) => setRole(e.target.value as TestRole)}
+                    onChange={(e) => {
+                      if (accountType !== 'payg-no-tier') setRole(e.target.value as TestRole);
+                    }}
                     className="mt-1 w-5 h-5 text-teal-600"
+                    disabled={accountType === 'payg-no-tier'}
                   />
                   <div className="flex-1">
                     <div className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
@@ -435,6 +510,9 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Language select • Live captions
                     </p>
+                    {accountType === 'payg-no-tier' && (
+                      <span className="text-xs text-amber-600 dark:text-amber-400">Select a tier to enable Participant</span>
+                    )}
                   </div>
                 </label>
               </div>
