@@ -488,6 +488,7 @@ function AppContent(props: AppContentProps): React.ReactElement | null {
           onStartNewSession={handleStartNewSession}
           onReturnToDashboard={handleReturnToDashboard}
           onOpenTierModal={handleOpenTierModal}
+          onSettings={handleOpenSettings}
         />
       )}
 
