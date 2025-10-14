@@ -1,6 +1,6 @@
 # MeetingSync Zoom App
 
-Real-time AI translation embedded directly in Zoom meetings.
+Real-time AI translation embedded directly in Zoom meetings. 
 
 ## ⚠️ About Mock Data
 
