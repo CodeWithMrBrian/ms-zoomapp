@@ -57,6 +57,7 @@ export interface SessionConfig {
   meeting_title?: string;
   allow_language_requests?: boolean;
   allow_participant_overage?: boolean;
+  tts_enabled?: boolean;
 }
 
 const SessionContext = createContext<SessionContextValue | undefined>(undefined);
@@ -141,7 +142,7 @@ export function SessionProvider({ children }: { children: ReactNode}) {
     console.log('[SessionContext] ✅ All requirements met, creating session...');
 
     // Create new session with V1 pricing fields initialized
-    const newSession: Session = {
+  const newSession: Session = {
       id: `session_${Date.now()}`,
       user_id: user.id,
       date_time_start: new Date().toISOString(),
@@ -167,8 +168,9 @@ export function SessionProvider({ children }: { children: ReactNode}) {
       overage_cost: 0,
       peak_participant_count: 0,
       // Overage permissions
-      allow_language_requests: config.allow_language_requests,
-      allow_participant_overage: config.allow_participant_overage
+  allow_language_requests: config.allow_language_requests,
+  allow_participant_overage: config.allow_participant_overage,
+  tts_enabled: config.tts_enabled ?? false
     };
 
     console.log('[SessionContext] Created newSession object:', newSession);

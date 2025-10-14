@@ -51,8 +51,16 @@ export function CompactParticipantCaptionView({
   const zoomContext = useZoom();
   
   // Compact States
-  const [ttsState, setTtsState] = useState<TTSState>(defaultTTSState);
-  const [showControls, setShowControls] = useState(false);
+  const [ttsState, setTtsState] = useState<TTSState>({
+    ...defaultTTSState,
+    isAvailable: false
+  });
+
+  // Force TTS to be available if session.tts_enabled is true
+  useEffect(() => {
+    setTtsState((prev) => ({ ...prev, isAvailable: Boolean(session?.tts_enabled) }));
+  }, [session?.tts_enabled]);
+  const [showControls, setShowControls] = useState(true);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [isConnected, setIsConnected] = useState(true);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
@@ -361,7 +369,7 @@ export function CompactParticipantCaptionView({
 
   // Audio Management Functions with error handling
   const handleTTSToggle = useCallback(async () => {
-    if (!ttsState.isAvailable || isDailyFreeTier) return;
+    if (!ttsState.isAvailable) return;
     
     try {
       if (!ttsState.isPlaying) {
@@ -526,15 +534,22 @@ export function CompactParticipantCaptionView({
         <div className="flex items-center gap-1 flex-shrink-0">
           <button
             onClick={() => setShowControls(!showControls)}
-            className="text-white hover:text-teal-100 p-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+            className="text-white hover:text-teal-100 px-2 py-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 flex items-center gap-1"
             aria-label={showControls ? 'Hide controls' : 'Show controls'}
             aria-expanded={showControls}
             aria-controls="audio-controls-panel"
             title="Toggle controls (Ctrl+M)"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              {showControls ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              )}
             </svg>
+            <span className="text-xs font-medium">
+              {showControls ? 'Hide' : 'Controls'}
+            </span>
           </button>
           
           <button
@@ -565,7 +580,7 @@ export function CompactParticipantCaptionView({
               variant={ttsState.isPlaying ? "secondary" : "primary"}
               size="sm"
               onClick={handleTTSToggle}
-              disabled={!ttsState.isAvailable || isDailyFreeTier}
+              disabled={!session?.tts_enabled}
               className="flex items-center gap-1 text-xs"
               aria-label={isDailyFreeTier ? 'Upgrade to use text-to-speech' : (ttsState.isPlaying ? 'Pause text-to-speech' : 'Play text-to-speech')}
               title={isDailyFreeTier ? 'Upgrade for TTS' : `${ttsState.isPlaying ? 'Pause' : 'Play'} TTS (Ctrl+P)`}
@@ -769,18 +784,29 @@ export function CompactParticipantCaptionView({
           </p>
           {currentlyPlaying === currentCaption.id && (
             <div className="flex justify-center mt-1">
-              <div className="flex items-center gap-0.5">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="w-0.5 bg-teal-300 rounded-full animate-pulse"
-                    style={{ 
-                      height: `${2 + Math.random() * 4}px`,
-                      animationDelay: `${i * 0.1}s`
-                    }}
-                  />
-                ))}
-              </div>
+              {/* Animated SVG Waveform */}
+              <svg width="48" height="16" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-pulse">
+                <rect x="2" y="6" width="4" height="4" rx="2" fill="#2dd4bf">
+                  <animate attributeName="height" values="4;12;4" dur="1s" repeatCount="indefinite"/>
+                  <animate attributeName="y" values="6;2;6" dur="1s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="10" y="2" width="4" height="12" rx="2" fill="#2dd4bf">
+                  <animate attributeName="height" values="12;4;12" dur="1s" repeatCount="indefinite"/>
+                  <animate attributeName="y" values="2;6;2" dur="1s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="18" y="4" width="4" height="8" rx="2" fill="#2dd4bf">
+                  <animate attributeName="height" values="8;14;8" dur="1s" repeatCount="indefinite"/>
+                  <animate attributeName="y" values="4;0;4" dur="1s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="26" y="2" width="4" height="12" rx="2" fill="#2dd4bf">
+                  <animate attributeName="height" values="12;4;12" dur="1s" repeatCount="indefinite"/>
+                  <animate attributeName="y" values="2;6;2" dur="1s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="34" y="6" width="4" height="4" rx="2" fill="#2dd4bf">
+                  <animate attributeName="height" values="4;12;4" dur="1s" repeatCount="indefinite"/>
+                  <animate attributeName="y" values="6;2;6" dur="1s" repeatCount="indefinite"/>
+                </rect>
+              </svg>
             </div>
           )}
         </div>

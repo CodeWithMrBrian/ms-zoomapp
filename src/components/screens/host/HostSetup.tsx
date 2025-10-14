@@ -358,7 +358,8 @@ export function HostSetup({ onStart, onCancel, onSettings, onOpenTierModal }: Ho
       glossary_id: selectedGlossary || undefined,
       meeting_title: meetingContext?.meetingTopic,
       allow_language_requests: allowLanguageRequests,
-      allow_participant_overage: allowParticipantOverage
+      allow_participant_overage: allowParticipantOverage,
+      tts_enabled: ttsEnabled
     });
 
     console.log('[HostSetup] startSession completed, waiting for isActive to become true...');

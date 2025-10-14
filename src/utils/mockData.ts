@@ -537,7 +537,8 @@ export const MOCK_SESSION_ACTIVE: Session = {
   billing_type: 'payg',
   cost: 0,
   status: 'active',
-  created_at: new Date().toISOString()
+  created_at: new Date().toISOString(),
+  tts_enabled: true
 };
 
 // ============================================
