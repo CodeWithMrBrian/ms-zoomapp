@@ -264,6 +264,17 @@ VITE_FORCE_TEST_MODE=true
 **Warning:**
 > Do not leave this variable enabled in production for real users, as it exposes test/demo features intended for development and QA only.
 
+## 🚨 Forcing Test Mode in All Environments
+
+To guarantee the test mode selector always appears (regardless of environment variables or deployment target), you can force development mode in `src/App.tsx`:
+
+```
+// Force dev mode ON (always show test mode selector)
+const isDevelopmentMode = true;
+```
+
+This will make the test/demo selector and screens visible everywhere, including production. Remember to revert this change before going live to real users.
+
 ## Troubleshooting
 
 ### "Zoom SDK failed to initialize"
