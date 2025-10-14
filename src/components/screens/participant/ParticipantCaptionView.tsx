@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { useSession } from '../../../context/SessionContext';
 import { LANGUAGES } from '../../../utils/constants';
-import { Caption } from '../../../types';
 
 /**
  * ParticipantCaptionView Screen (Screen 7)
@@ -33,7 +32,6 @@ export function ParticipantCaptionView({
 }: ParticipantCaptionViewProps) {
   const { session, captions, currentCaption } = useSession();
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
-  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [isConnected, setIsConnected] = useState(true);
   const captionsEndRef = useRef<HTMLDivElement>(null);
 
@@ -273,20 +271,4 @@ export function ParticipantCaptionView({
   );
 }
 
-// Add fadeIn animation to index.css
-const styles = `
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-`;
+// ...existing code...

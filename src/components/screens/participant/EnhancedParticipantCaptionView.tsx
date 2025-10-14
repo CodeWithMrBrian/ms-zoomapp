@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/Card';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Card, CardContent } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { useSession } from '../../../context/SessionContext';
 import { useUser } from '../../../context/UserContext';
 import { LANGUAGES } from '../../../utils/constants';
-import { Caption } from '../../../types';
+// ...existing code...
 
 /**
  * Enhanced Participant Caption View Screen

@@ -1,10 +1,10 @@
-import React from 'react';
+// ...existing code...
 import { Modal } from '../../ui/Modal';
 import { Button } from '../../ui/Button';
-import { ProgressBar } from '../../ui/ProgressBar';
+// ...existing code...
 import { Badge } from '../../ui/Badge';
 import { useUser } from '../../../context/UserContext';
-import { formatCurrency, PRICING_TIERS, calculateParticipantMultiplier } from '../../../utils/constants';
+import { formatCurrency } from '../../../utils/constants';
 
 /**
  * UsageWarningModal (Screen 5)
