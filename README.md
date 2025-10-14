@@ -249,6 +249,21 @@ See [src/App.tsx](src/App.tsx) for SDK initialization and usage examples.
 | `VITE_API_URL` | Backend API URL (future) | No |
 | `VITE_ENV` | Environment (development/production) | No |
 
+## 🚩 Test Mode in Production
+
+To enable the test mode selector and test screens in production (e.g., on Vercel), set the following environment variable:
+
+```
+VITE_FORCE_TEST_MODE=true
+```
+
+- When this variable is set to `true`, the app will show the test mode selector and allow test/demo flows even in production builds.
+- This is useful for QA, demos, or customer previews where you want to bypass the normal Zoom/host/participant logic.
+- You can set this in your `.env.production` file or in your Vercel project’s environment variables.
+
+**Warning:**
+> Do not leave this variable enabled in production for real users, as it exposes test/demo features intended for development and QA only.
+
 ## Troubleshooting
 
 ### "Zoom SDK failed to initialize"

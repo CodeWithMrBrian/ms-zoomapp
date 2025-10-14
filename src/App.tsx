@@ -567,8 +567,8 @@ function App() {
   const [showTestSelector, setShowTestSelector] = useState(true);
   const [showStartOverButton, setShowStartOverButton] = useState(true);
 
-  // Check if in development mode
-  const isDevelopmentMode = import.meta.env.DEV;
+  // Check if in development mode or forced test mode
+  const isDevelopmentMode = import.meta.env.DEV || import.meta.env.VITE_FORCE_TEST_MODE === 'true';
 
   // Check for "Start Over" button visibility (can be toggled with Ctrl+Shift+S)
   useEffect(() => {
