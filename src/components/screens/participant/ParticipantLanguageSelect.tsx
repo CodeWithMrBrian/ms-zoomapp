@@ -254,7 +254,7 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
             className="w-full"
           >
             {selectedLanguage 
-              ? `Confirm ${getLanguageName(selectedLanguage)}` 
+              ? `Start translating ${getLanguageName(selectedLanguage)}` 
               : 'Select a Language'
             }
           </Button>
