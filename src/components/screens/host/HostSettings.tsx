@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Tabs, Tab } from '../../ui/Tabs';
+import { NavigationHeader } from '../../ui/NavigationHeader';
 import { ActivityTab } from '../../features/ActivityTab';
 import { TemplatesTab } from '../../features/TemplatesTab';
 import { GlossariesTab } from '../../features/GlossariesTab';
@@ -63,31 +64,17 @@ export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMeth
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-700 dark:to-cyan-700 rounded-lg px-6 py-4 shadow-lg mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-2xl font-bold text-white">MeetingSync - Settings</h1>
-          <button
-            onClick={onBack}
-            className="text-white hover:text-teal-100 transition-colors text-sm font-medium"
-          >
-            ← Back
-          </button>
-        </div>
-
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-sm">
-          <button
-            onClick={onBack}
-            className="text-teal-100 hover:text-white transition-colors"
-          >
-            Home
-          </button>
-          <span className="text-teal-200">/</span>
-          <span className="text-white font-medium">{getCurrentTabLabel()}</span>
-        </nav>
-      </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 space-y-4 sm:space-y-6">
+      {/* Navigation Header with Breadcrumbs */}
+      <NavigationHeader
+        title="Settings"
+        onBack={onBack}
+        backLabel="Back"
+        breadcrumbs={[
+          { label: 'Home', onClick: onBack },
+          { label: getCurrentTabLabel() }
+        ]}
+      />
 
       {/* Tabbed Interface */}
       <Tabs
