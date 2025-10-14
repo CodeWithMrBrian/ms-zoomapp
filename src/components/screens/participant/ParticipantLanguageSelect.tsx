@@ -27,6 +27,9 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
   // Ref for the Free Tier disabled button
   const freeTierDisabledBtnRef = useRef<HTMLButtonElement | null>(null);
 
+  // Check if host has enabled language requests
+  const isLanguageRequestsEnabled = session?.allow_language_requests === true;
+
   // Get available languages from active session
   const availableLanguages = useMemo(() => {
     if (!session) return [];
@@ -78,11 +81,17 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
 
   // Handle request for custom/search language
   const handleRequestCustomLanguage = () => {
-    setShowRequestModal(true);
+    if (isLanguageRequestsEnabled) {
+      setShowRequestModal(true);
+    }
   };
 
   // Handle refresh languages (simulate host auto-approval)
   const handleRefreshLanguages = () => {
+    if (!isLanguageRequestsEnabled) {
+      return; // Don't allow any action if language requests are disabled
+    }
+    
     if (requestedLanguages.length > 0) {
       const approvedLanguages = [...requestedLanguages];
       
@@ -218,7 +227,7 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               No languages found matching "{searchQuery}"
             </p>
-            {!isDailyFreeTier && (
+            {!isDailyFreeTier && isLanguageRequestsEnabled && (
               <Button 
                 variant="outline" 
                 onClick={handleRequestCustomLanguage}
@@ -226,6 +235,9 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
               >
                 Request "{searchQuery}" Language
               </Button>
+            )}
+            {!isDailyFreeTier && !isLanguageRequestsEnabled && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Host has disabled additional language requests.</p>
             )}
             {isDailyFreeTier && (
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Free tier users cannot request additional languages.</p>
@@ -247,7 +259,7 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
             }
           </Button>
           
-          {!isDailyFreeTier && (
+          {!isDailyFreeTier && isLanguageRequestsEnabled && (
             <Button
               variant="outline"
               onClick={handleRefreshLanguages}
@@ -257,6 +269,15 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
                 ? `🔄 Refresh Languages (${requestedLanguages.length} approved)`
                 : '+ Request Different Language'
               }
+            </Button>
+          )}
+          {!isDailyFreeTier && !isLanguageRequestsEnabled && (
+            <Button
+              variant="outline"
+              className="w-full opacity-50 cursor-not-allowed"
+              disabled
+            >
+              + Request Different Language (Host disabled)
             </Button>
           )}
           {isDailyFreeTier && (
@@ -273,7 +294,7 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
       </div>
 
       {/* Request Language Modal */}
-      {showRequestModal && !isDailyFreeTier && (
+      {showRequestModal && !isDailyFreeTier && isLanguageRequestsEnabled && (
         <RequestLanguageModal
           isOpen={showRequestModal}
           onClose={() => setShowRequestModal(false)}
