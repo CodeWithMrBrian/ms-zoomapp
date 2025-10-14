@@ -657,11 +657,11 @@ function App() {
       <ErrorBoundary>
         <ZoomAppContainer>{appContent}</ZoomAppContainer>
 
-        {/* Floating Start Over Button (Development Only - Toggle with Ctrl+Shift+S) */}
+        {/* Start Over Button moved to top middle (Development Only - Toggle with Ctrl+Shift+S) */}
         {showStartOverButton && (
           <button
             onClick={handleResetToTestMode}
-            className="fixed bottom-4 left-4 z-50 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg shadow-lg transition-colors flex items-center gap-2"
+            className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg shadow-lg transition-colors flex items-center gap-2"
             title="Return to test mode selector (Ctrl+Shift+S to toggle)"
           >
             <span>Start Over</span>

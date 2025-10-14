@@ -33,7 +33,8 @@ const DEVICE_WIDTHS: Record<DeviceType, { width: number; label: string }> = {
 
 export function ZoomAppContainer({ children }: ZoomAppContainerProps) {
   const [device, setDevice] = useState<DeviceType>('windows');
-  const [showControls, setShowControls] = useState(true);
+  // Hide controls by default
+  const [showControls, setShowControls] = useState(false);
   const [showWidthIndicator, setShowWidthIndicator] = useState(true);
 
   const deviceWidth = DEVICE_WIDTHS[device].width;
