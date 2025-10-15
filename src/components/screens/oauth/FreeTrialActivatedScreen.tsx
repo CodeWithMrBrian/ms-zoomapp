@@ -1,5 +1,6 @@
 // React import not needed for component
 import { Button, Card, Badge } from '../../ui';
+import { SidebarCompactLayout } from '../../ui/SidebarLayout';
 import { PRICING_TIERS } from '../../../utils/constants';
 import { pricingConfig } from '../../../utils/pricingManager';
 
@@ -19,7 +20,10 @@ export function FreeTrialActivatedScreen({
   onComparePlans
 }: FreeTrialActivatedScreenProps) {
   return (
-    <div className="h-full flex items-center justify-center p-6 bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+    <SidebarCompactLayout 
+      className="min-h-full flex items-start justify-center bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-4"
+      pageTitle="Daily Free Tier Activated"
+    >
       <Card variant="beautiful" className="max-w-lg w-full">
         <div className="text-center space-y-6 p-8">
           {/* Success Icon */}
@@ -153,6 +157,6 @@ export function FreeTrialActivatedScreen({
           </p>
         </div>
       </Card>
-    </div>
+    </SidebarCompactLayout>
   );
 }

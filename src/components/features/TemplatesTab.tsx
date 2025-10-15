@@ -253,7 +253,7 @@ export function TemplatesTab() {
                       </div>
                     </div>
                     <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 max-h-48 overflow-y-auto">
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {LANGUAGES.slice(0, 12).map(lang => (
                           <label key={lang.code} className="flex items-center gap-2 cursor-pointer">
                             <input
@@ -262,7 +262,7 @@ export function TemplatesTab() {
                               onChange={() => toggleLanguage(lang.code)}
                               className="w-4 h-4 text-teal-600 rounded"
                             />
-                            <span className="text-sm text-gray-900 dark:text-gray-100">
+                            <span className="text-sm text-gray-900 dark:text-gray-100 break-words">
                               {lang.flag} {lang.name}
                             </span>
                           </label>
@@ -446,7 +446,7 @@ export function TemplatesTab() {
                   </div>
                 </div>
                 <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 max-h-48 overflow-y-auto">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {LANGUAGES.slice(0, 12).map(lang => (
                       <label key={lang.code} className="flex items-center gap-2 cursor-pointer">
                         <input
@@ -455,7 +455,7 @@ export function TemplatesTab() {
                           onChange={() => toggleLanguage(lang.code)}
                           className="w-4 h-4 text-teal-600 rounded"
                         />
-                        <span className="text-sm text-gray-900 dark:text-gray-100">
+                        <span className="text-sm text-gray-900 dark:text-gray-100 break-words">
                           {lang.flag} {lang.name}
                         </span>
                       </label>

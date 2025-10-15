@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { NavigationHeader } from '../../ui/NavigationHeader';
+import { SidebarCompactLayout } from '../../ui/SidebarLayout';
 import { HelpModal } from '../modals/HelpModal';
 import { useSession } from '../../../context/SessionContext';
 import { useUser } from '../../../context/UserContext';
@@ -58,17 +59,21 @@ export function SessionSummary({ onStartNewSession, onReturnToDashboard, onOpenT
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 space-y-4 sm:space-y-6">
-      {/* Navigation Header */}
-      <NavigationHeader
-        title="Session Complete"
-        onBack={onReturnToDashboard}
-        backLabel="Dashboard"
-        showSettings={true}
-        onSettings={onSettings}
-        showHelp={true}
-        onHelp={() => setShowHelpModal(true)}
-      />
+    <SidebarCompactLayout 
+      className="bg-gray-50 dark:bg-gray-900"
+      pageTitle="Session Complete"
+    >
+      <div className="space-y-4 sm:space-y-6">
+        {/* Navigation Header */}
+        <NavigationHeader
+          title="Session Complete"
+          onBack={onReturnToDashboard}
+          backLabel="Dashboard"
+          showSettings={true}
+          onSettings={onSettings}
+          showHelp={true}
+          onHelp={() => setShowHelpModal(true)}
+        />
 
       {/* Success Message */}
       <Card variant="default" padding="lg">
@@ -309,11 +314,12 @@ export function SessionSummary({ onStartNewSession, onReturnToDashboard, onOpenT
         </Card>
       )}
 
-      {/* Help Modal */}
-      <HelpModal
-        isOpen={showHelpModal}
-        onClose={() => setShowHelpModal(false)}
-      />
-    </div>
+        {/* Help Modal */}
+        <HelpModal
+          isOpen={showHelpModal}
+          onClose={() => setShowHelpModal(false)}
+        />
+      </div>
+    </SidebarCompactLayout>
   );
 }

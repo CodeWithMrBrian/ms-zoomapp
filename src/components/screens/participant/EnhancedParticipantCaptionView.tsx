@@ -41,22 +41,19 @@ export function EnhancedParticipantCaptionView({
   onChangeLanguage,
   onLeave
 }: EnhancedParticipantCaptionViewProps) {
-  // Add a ref for the top of the page
-  const topPageRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { session, captions, currentCaption } = useSession();
   
-  // Focus the top of the page on mount and set window title
+  // Focus management and page title
   useEffect(() => {
-    if (topPageRef.current) {
-      topPageRef.current.focus();
+    if (containerRef.current) {
+      containerRef.current.focus();
     }
     
-    // Set meaningful window title showing current page context
     const originalTitle = document.title;
     const meetingTitle = session?.meeting_title || 'Meeting';
     document.title = `Live Translation View - ${meetingTitle} | MeetingSync`;
     
-    // Restore original title on cleanup
     return () => {
       document.title = originalTitle;
     };
@@ -203,7 +200,14 @@ export function EnhancedParticipantCaptionView({
   };
 
   return (
-  <div ref={topPageRef} tabIndex={-1} style={{ outline: 'none' }} className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div 
+      ref={containerRef}
+      tabIndex={-1}
+      className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col"
+      role="main"
+      aria-label="Live translation view"
+    >
+      <div className="flex-1 overflow-hidden">
       {/* Enhanced Header Bar */}
       <div className="bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-700 dark:to-cyan-700 shadow-lg px-4 py-3 sticky top-0 z-20">
         <div className="flex items-center justify-between">
@@ -585,6 +589,7 @@ export function EnhancedParticipantCaptionView({
 
       {/* Hidden Audio Element for TTS */}
       <audio ref={ttsAudioRef} style={{ display: 'none' }} />
+      </div>
     </div>
   );
 }

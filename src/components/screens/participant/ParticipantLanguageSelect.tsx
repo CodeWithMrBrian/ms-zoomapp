@@ -17,13 +17,15 @@ interface ParticipantLanguageSelectProps {
 }
 
 export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onRequestLanguage }: ParticipantLanguageSelectProps) {
-  const { session, addLanguageToSession } = useSession();
+  const { session, addLanguagesToSession } = useSession();
   const { isDailyFreeTier } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestedLanguages, setRequestedLanguages] = useState<string[]>([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  // Force re-render counter to ensure UI updates after language changes
+  const [forceUpdateCounter, setForceUpdateCounter] = useState(0);
   // Ref for the Free Tier disabled button
   const freeTierDisabledBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -32,17 +34,35 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
 
   // Get available languages from active session
   const availableLanguages = useMemo(() => {
-    if (!session) return [];
-    let maxLanguages = session.target_languages.length;
-    if (isDailyFreeTier) {
-      maxLanguages = pricingConfig.getFreeTierLanguageLimits().total;
-    } else if (session.tier) {
-      // session.tier should be 'starter', 'professional', or 'enterprise'
-      maxLanguages = pricingConfig.getPaygTierLanguageLimits(session.tier).total;
+    console.log('[ParticipantLanguageSelect] availableLanguages useMemo triggered');
+    console.log('[ParticipantLanguageSelect] Current session:', session);
+    console.log('[ParticipantLanguageSelect] Session target_languages:', session?.target_languages);
+    console.log('[ParticipantLanguageSelect] Target languages length:', session?.target_languages?.length);
+    
+    if (!session) {
+      console.log('[ParticipantLanguageSelect] No session, returning empty array');
+      return [];
     }
-    const filtered = LANGUAGES.filter(lang => session.target_languages.includes(lang.code));
-    return filtered.slice(0, maxLanguages);
-  }, [session, isDailyFreeTier]);
+    
+    // For participants, we show ALL currently approved languages for this session
+    // The tier limits are enforced at the host level when approving new language requests
+    // Here we just display what's already been approved and available
+    const approvedLanguages = LANGUAGES.filter(lang => session.target_languages.includes(lang.code));
+    console.log('[ParticipantLanguageSelect] All approved languages for session:', approvedLanguages.map(l => `${l.code}: ${l.name}`));
+    
+    // Log tier information for debugging
+    if (isDailyFreeTier) {
+      const freeLimits = pricingConfig.getFreeTierLanguageLimits();
+      console.log('[ParticipantLanguageSelect] Free tier limits - translations:', freeLimits.translations, 'total:', freeLimits.total);
+    } else if (session.tier) {
+      const paygLimits = pricingConfig.getPaygTierLanguageLimits(session.tier);
+      console.log('[ParticipantLanguageSelect] PAYG tier', session.tier, 'limits - translations:', paygLimits.translations, 'total:', paygLimits.total);
+    }
+    
+    console.log('[ParticipantLanguageSelect] Final available languages:', approvedLanguages.map(l => `${l.code}: ${l.name}`));
+    
+    return approvedLanguages;
+  }, [session?.target_languages?.join(','), isDailyFreeTier, forceUpdateCounter]);
 
   // Filter languages based on search
   const filteredLanguages = useMemo(() => {
@@ -53,6 +73,14 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
       lang.code.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [availableLanguages, searchQuery]);
+
+  // Debug: Monitor session and available languages changes
+  useEffect(() => {
+    console.log('[ParticipantLanguageSelect] useEffect - Session or languages changed');
+    console.log('[ParticipantLanguageSelect] Session target_languages:', session?.target_languages);
+    console.log('[ParticipantLanguageSelect] Available languages count:', availableLanguages.length);
+    console.log('[ParticipantLanguageSelect] Available languages:', availableLanguages.map(l => `${l.code}: ${l.name}`));
+  }, [session?.target_languages, availableLanguages]);
 
   // Focus the Free Tier disabled button when all languages are selected (Free Tier only)
   useEffect(() => {
@@ -88,27 +116,44 @@ export function ParticipantLanguageSelect({ onLanguageSelect, onCancel, onReques
 
   // Handle refresh languages (simulate host auto-approval)
   const handleRefreshLanguages = () => {
+    console.log('[ParticipantLanguageSelect] === REFRESH LANGUAGES STARTED ===');
+    console.log('[ParticipantLanguageSelect] isLanguageRequestsEnabled:', isLanguageRequestsEnabled);
+    console.log('[ParticipantLanguageSelect] requestedLanguages:', requestedLanguages);
+    console.log('[ParticipantLanguageSelect] Current session before refresh:', session);
+    console.log('[ParticipantLanguageSelect] Current availableLanguages before refresh:', availableLanguages.map(l => `${l.code}: ${l.name}`));
+    
     if (!isLanguageRequestsEnabled) {
+      console.log('[ParticipantLanguageSelect] Language requests disabled, aborting');
       return; // Don't allow any action if language requests are disabled
     }
     
     if (requestedLanguages.length > 0) {
       const approvedLanguages = [...requestedLanguages];
+      console.log('[ParticipantLanguageSelect] Processing approved languages:', approvedLanguages);
       
-      // Simulate host auto-approval by adding all requested languages to session
-      requestedLanguages.forEach(languageCode => {
-        addLanguageToSession(languageCode);
-      });
+      // Simulate host auto-approval by adding all requested languages to session at once
+      // This prevents race conditions that occurred with forEach + addLanguageToSession
+      console.log('[ParticipantLanguageSelect] Calling addLanguagesToSession with:', approvedLanguages);
+      addLanguagesToSession(approvedLanguages);
       
       // Clear the requested languages list and show success
+      console.log('[ParticipantLanguageSelect] Clearing requested languages and showing success');
       setRequestedLanguages([]);
       setShowSuccessMessage(true);
       
-      // Hide success message after 3 seconds
-      setTimeout(() => setShowSuccessMessage(false), 3000);
+      // Force UI update to ensure languages appear
+      console.log('[ParticipantLanguageSelect] Forcing UI update');
+      setForceUpdateCounter(prev => prev + 1);
       
-      console.log('[ParticipantLanguageSelect] Auto-approved and added languages:', approvedLanguages);
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        console.log('[ParticipantLanguageSelect] Hiding success message');
+        setShowSuccessMessage(false);
+      }, 3000);
+      
+      console.log('[ParticipantLanguageSelect] === REFRESH LANGUAGES COMPLETED ===');
     } else {
+      console.log('[ParticipantLanguageSelect] No requested languages, showing request modal');
       // If no requested languages, show the request modal
       setShowRequestModal(true);
     }

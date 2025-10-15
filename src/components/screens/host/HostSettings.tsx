@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Tabs, Tab } from '../../ui/Tabs';
 import { NavigationHeader } from '../../ui/NavigationHeader';
+import { SidebarSettingsLayout } from '../../ui/SidebarLayout';
 import { ActivityTab } from '../../features/ActivityTab';
 import { TemplatesTab } from '../../features/TemplatesTab';
 import { GlossariesTab } from '../../features/GlossariesTab';
@@ -24,14 +25,15 @@ interface HostSettingsProps {
   onBack: () => void;
   defaultTab?: string;
   onAddPaymentMethod?: () => void; // Callback to open AddPaymentMethodModal
+  onViewAnalytics?: () => void; // Callback to navigate to analytics dashboard
 }
 
-export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMethod }: HostSettingsProps) {
+export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMethod, onViewAnalytics }: HostSettingsProps) {
   const tabs: Tab[] = [
     {
       id: 'activity',
       label: 'Activity',
-      content: <ActivityTab />
+      content: <ActivityTab onViewAnalytics={onViewAnalytics} />
     },
     {
       id: 'templates',
@@ -64,24 +66,29 @@ export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMeth
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 space-y-4 sm:space-y-6">
-      {/* Navigation Header with Breadcrumbs */}
-      <NavigationHeader
-        title="Settings"
-        onBack={onBack}
-        backLabel="Back"
-        breadcrumbs={[
-          { label: 'Home', onClick: onBack },
-          { label: getCurrentTabLabel() }
-        ]}
-      />
+    <SidebarSettingsLayout 
+      className="bg-gray-50 dark:bg-gray-900"
+      pageTitle={`Settings - ${getCurrentTabLabel()}`}
+    >
+      <div className="space-y-4 sm:space-y-6">
+        {/* Navigation Header with Breadcrumbs */}
+        <NavigationHeader
+          title="Settings"
+          onBack={onBack}
+          backLabel="Back"
+          breadcrumbs={[
+            { label: 'Home', onClick: onBack },
+            { label: getCurrentTabLabel() }
+          ]}
+        />
 
-      {/* Tabbed Interface */}
-      <Tabs
-        tabs={tabs}
-        defaultTab={defaultTab}
-        onChange={setCurrentTab}
-      />
-    </div>
+        {/* Tabbed Interface */}
+        <Tabs
+          tabs={tabs}
+          defaultTab={defaultTab}
+          onChange={setCurrentTab}
+        />
+      </div>
+    </SidebarSettingsLayout>
   );
 }

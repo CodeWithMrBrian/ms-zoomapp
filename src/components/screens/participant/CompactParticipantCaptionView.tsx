@@ -46,23 +46,19 @@ export function CompactParticipantCaptionView({
   onChangeLanguage,
   onLeave
 }: CompactParticipantCaptionViewProps) {
-  // Add a ref for the top of the page
-  const topPageRef = useRef<HTMLDivElement | null>(null);
-  
+  const containerRef = useRef<HTMLDivElement>(null);
   const { session, captions = [], currentCaption } = useSession();
   
-  // Focus the top of the page on mount and set window title
+  // Focus management and page title
   useEffect(() => {
-    if (topPageRef.current) {
-      topPageRef.current.focus();
+    if (containerRef.current) {
+      containerRef.current.focus();
     }
     
-    // Set meaningful window title showing current page context
     const originalTitle = document.title;
     const meetingTitle = session?.meeting_title || 'Meeting';
     document.title = `Live Translation View - ${meetingTitle} | MeetingSync`;
     
-    // Restore original title on cleanup
     return () => {
       document.title = originalTitle;
     };
@@ -532,12 +528,11 @@ export function CompactParticipantCaptionView({
 
   return (
     <div 
-      ref={topPageRef}
+      ref={containerRef}
       tabIndex={-1}
-      style={{ outline: 'none' }}
       className="h-full flex flex-col bg-gray-50 dark:bg-gray-900"
-      role="region"
-      aria-label="Translation captions"
+      role="main"
+      aria-label="Live translation view"
     >
       {/* Page Title Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">

@@ -5,9 +5,9 @@ import { Badge } from '../../ui/Badge';
 import { Select } from '../../ui/Select';
 import { Checkbox } from '../../ui/Checkbox';
 import { Toggle } from '../../ui/Toggle';
-
 import { Input } from '../../ui/Input';
 import { NavigationHeader, NavigationAction } from '../../ui/NavigationHeader';
+import { SidebarCompactLayout } from '../../ui/SidebarLayout';
 import { HelpIcon } from '../../ui/Tooltip';
 import { useToast } from '../../ui/Toast';
 import { Skeleton } from '../../ui/Skeleton';
@@ -274,19 +274,45 @@ export function HostSetup({ onStart, onCancel, onSettings, onOpenTierModal }: Ho
     }
 
     setTargetLanguages(prev => {
-      if (prev.includes(langCode)) {
-        return prev.filter(code => code !== langCode);
-      } else {
-        // Check language limit
-        if (prev.length >= languageLimit) {
-          showToast(
-        `Language limit reached: ${languageLimit} language${languageLimit !== 1 ? 's' : ''}`,
-        'warning'
-      );
-          return prev;
-        }
-        return [...prev, langCode];
+      const newLanguages = prev.includes(langCode) 
+        ? prev.filter(code => code !== langCode)
+        : prev.length >= languageLimit 
+          ? (showToast(
+              `Language limit reached: ${languageLimit} language${languageLimit !== 1 ? 's' : ''}`,
+              'warning'
+            ), prev)
+          : [...prev, langCode];
+      
+      // Check if we've reached the required number of languages and should focus Advanced Options
+      // Recalculate required count to ensure we have the latest values
+      const currentEffectiveTier = user?.subscription_tier || selectedTier;
+      const currentRequiredCount = currentEffectiveTier && !isDailyFreeTier ? 
+        pricingConfig.getPaygTierLanguageLimits(currentEffectiveTier).translations : 
+        (isDailyFreeTier ? pricingConfig.getFreeTierLanguageLimits().translations : null);
+      
+      const willHaveCorrectCount = currentRequiredCount ? newLanguages.length === currentRequiredCount : newLanguages.length > 0;
+      const hadCorrectCount = currentRequiredCount ? prev.length === currentRequiredCount : prev.length > 0;
+      
+      // Focus Advanced Options when we achieve the correct language count for the first time
+      if (willHaveCorrectCount && !hadCorrectCount) {
+        console.log('[HostSetup] Focus condition met: willHaveCorrectCount =', willHaveCorrectCount, 'hadCorrectCount =', hadCorrectCount);
+        console.log('[HostSetup] New languages count:', newLanguages.length, 'Required count:', currentRequiredCount);
+        console.log('[HostSetup] Previous languages count:', prev.length);
+        setTimeout(() => {
+          console.log('[HostSetup] Attempting to focus Advanced Options button');
+          const button = advancedOptionsButtonRef.current;
+          if (button) {
+            console.log('[HostSetup] Button found, focusing...');
+            button.focus();
+            // Scroll into view if needed
+            button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            console.warn('[HostSetup] Advanced Options button ref is null');
+          }
+        }, 150); // Increased timeout slightly
       }
+      
+      return newLanguages;
     });
   };
 
@@ -402,12 +428,16 @@ export function HostSetup({ onStart, onCancel, onSettings, onOpenTierModal }: Ho
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 space-y-4 sm:space-y-6">
-      {/* Navigation Header */}
-      <NavigationHeader
-        title="Start Translation"
-        onBack={onCancel}
-        backLabel="Back"
+    <SidebarCompactLayout 
+      className="bg-gray-50 dark:bg-gray-900"
+      pageTitle="Start Translation"
+    >
+      <div className="space-y-4 sm:space-y-6">
+        {/* Navigation Header */}
+        <NavigationHeader
+          title="Start Translation"
+          onBack={onCancel}
+          backLabel="Back"
         actions={
           <NavigationAction
             onClick={onSettings}
@@ -817,12 +847,6 @@ export function HostSetup({ onStart, onCancel, onSettings, onOpenTierModal }: Ho
                         checked={targetLanguages.includes(lang.code)}
                         onChange={() => {
                           toggleLanguage(lang.code);
-                          // If this is the last language to reach the limit, move focus to Advanced Options
-                          if (!targetLanguages.includes(lang.code) && targetLanguages.length + 1 === languageLimit) {
-                            setTimeout(() => {
-                              advancedOptionsButtonRef.current?.focus();
-                            }, 100);
-                          }
                         }}
                         disabled={
                           isLanguageSelectionDisabled || 
@@ -1239,6 +1263,7 @@ export function HostSetup({ onStart, onCancel, onSettings, onOpenTierModal }: Ho
         selectedTier={pendingTierSelection || ''}
         isChangingTier={!!selectedTier || !!user?.subscription_tier}
       />
-    </div>
+      </div>
+    </SidebarCompactLayout>
   );
 }

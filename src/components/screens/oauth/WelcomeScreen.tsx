@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Card } from '../../ui';
+import { SidebarCompactLayout } from '../../ui/SidebarLayout';
 import { UpgradeZoomInfoModal } from '../modals/UpgradeZoomInfoModal';
 
 export interface WelcomeScreenProps {
@@ -7,7 +8,6 @@ export interface WelcomeScreenProps {
   isPaidZoom: boolean;
   onStartFreeTier: () => void;
   onSeePlans: () => void;
-  onSkip?: () => void;
   onCancel?: () => void;
 }
 
@@ -23,7 +23,6 @@ export function WelcomeScreen({
   isPaidZoom,
   onStartFreeTier,
   onSeePlans,
-  onSkip,
   onCancel
 }: WelcomeScreenProps) {
   if (!isPaidZoom) {
@@ -31,7 +30,10 @@ export function WelcomeScreen({
   }
 
   return (
-    <div className="h-full flex items-center justify-center p-6 bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+    <SidebarCompactLayout 
+      className="min-h-full flex items-start justify-center bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-4"
+      pageTitle="Welcome"
+    >
       <Card variant="beautiful" className="max-w-md w-full">
         <div className="text-center space-y-6 p-8">
           {/* Logo */}
@@ -141,19 +143,10 @@ export function WelcomeScreen({
             >
               See Pricing Plans
             </Button>
-
-            {onSkip && (
-              <button
-                onClick={onSkip}
-                className="w-full text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-              >
-                Skip - Just Browse
-              </button>
-            )}
           </div>
         </div>
       </Card>
-    </div>
+    </SidebarCompactLayout>
   );
 }
 
@@ -177,8 +170,11 @@ function UpgradeRequiredScreen({ userName, onSeePlans, onCancel }: UpgradeRequir
 
   return (
     <>
-      <div className="h-full flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <Card variant="beautiful" className="max-w-md w-full">
+      <SidebarCompactLayout 
+        className="min-h-full flex items-start justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-4"
+        pageTitle="Welcome - Upgrade Required"
+      >
+        <Card variant="beautiful" className="max-w-md w-full">
         <div className="text-center space-y-6 p-8">
           {/* Logo */}
           <div className="flex justify-center mb-4">
@@ -274,7 +270,7 @@ function UpgradeRequiredScreen({ userName, onSeePlans, onCancel }: UpgradeRequir
           )}
         </div>
       </Card>
-      </div>
+      </SidebarCompactLayout>
 
       {/* Upgrade Modal */}
       <UpgradeZoomInfoModal
