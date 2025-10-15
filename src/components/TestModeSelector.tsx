@@ -8,14 +8,15 @@ import { Button } from './ui/Button';
 import { Badge } from './ui/Badge';
 
 /**
- * Test Mode Selector - Redesigned V2
+ * Test Mode Selector - Redesigned V3
  *
- * Two distinct testing paths:
+ * Three distinct testing paths:
  * 1. Full Journey: Complete first-time user experience (OAuth → Daily Free Tier → Host)
  * 2. Direct Access: Skip to main pages with paid account configuration
+ * 3. Settings Dashboard: Direct access to HostSettings with all tabs (PAYG Starter + Host)
  */
 
-export type TestPath = 'full-journey' | 'direct-access';
+export type TestPath = 'full-journey' | 'direct-access' | 'settings-dashboard';
 export type TestAccountType =
   | 'free-tier'         // 15 min/day free (ongoing forever)
   | 'payg-no-tier'      // PAYG with payment method but no tier selected
@@ -69,6 +70,13 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
       onStart({
         path: 'full-journey',
         accountType: 'free-tier',
+        role: 'host'
+      });
+    } else if (path === 'settings-dashboard') {
+      // Settings dashboard bypasses configuration - defaults to PAYG Starter + Host
+      onStart({
+        path: 'settings-dashboard',
+        accountType: 'payg-starter',
         role: 'host'
       });
     } else {
@@ -212,13 +220,13 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h4 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                          2. Test a Specific Page
+                          2. Test Specific Tier/Role
                         </h4>
                         <Badge variant="neutral">Fast Testing</Badge>
                       </div>
 
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        Jump directly to any page to test specific features
+                        Configure account tier and role to test specific user scenarios
                       </p>
 
                       <div className="bg-white dark:bg-gray-800 rounded-lg p-3 mb-4">
@@ -239,7 +247,7 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
 
                       <div className="flex items-center gap-2 text-sm mb-4">
                         <span className="text-purple-600 dark:text-purple-400 font-medium">Best for:</span>
-                        <span className="text-gray-600 dark:text-gray-400">Testing specific features quickly</span>
+                        <span className="text-gray-600 dark:text-gray-400">Testing tier-specific features and role workflows</span>
                       </div>
 
 
@@ -249,7 +257,61 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
                           size="lg"
                           className="w-full group-hover:shadow-lg transition-shadow"
                         >
-                          Choose Specific Page →
+                          Configure Tier & Role →
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Settings Dashboard Option */}
+              <div
+                onClick={() => handlePathSelection('settings-dashboard')}
+                className="group cursor-pointer"
+              >
+                <div className="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-6 hover:border-orange-500 dark:hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                          3. Settings Dashboard
+                        </h4>
+                        <Badge variant="warning">Quick Access</Badge>
+                      </div>
+
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Jump directly to the settings interface with all tabs
+                      </p>
+
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-3 mb-4">
+                        <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          You'll access all tabs:
+                        </div>
+                        <div className="space-y-1.5 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="text-orange-600 dark:text-orange-400">•</span>
+                            <span className="text-gray-700 dark:text-gray-300">Activity (session history & analytics)</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-orange-600 dark:text-orange-400">•</span>
+                            <span className="text-gray-700 dark:text-gray-300">Templates, Glossaries, Account, Preferences</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-sm mb-4">
+                        <span className="text-orange-600 dark:text-orange-400 font-medium">Best for:</span>
+                        <span className="text-gray-600 dark:text-gray-400">Testing settings, billing, and management features</span>
+                      </div>
+
+                      <div className="mt-4">
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="w-full group-hover:shadow-lg transition-shadow border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900/20"
+                        >
+                          Open Settings Dashboard →
                         </Button>
                       </div>
                     </div>
@@ -261,7 +323,7 @@ export function TestModeSelector({ onStart }: TestModeSelectorProps) {
               <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <div className="text-sm text-gray-700 dark:text-gray-300">
-                    <strong>Both paths include:</strong>
+                    <strong>All paths include:</strong>
                     <ul className="mt-2 space-y-1 ml-4">
                       <li>• Floating "Start Over" button to return here</li>
                       <li>• All data is mocked - no backend required</li>

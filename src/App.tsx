@@ -124,6 +124,13 @@ function AppContent(props: AppContentProps): React.ReactElement | null {
       return;
     }
 
+    // If settings-dashboard test mode, go directly to settings
+    if (testMode?.path === 'settings-dashboard' && !hasInitialized) {
+      setHasInitialized(true);
+      setCurrentScreen('host-settings');
+      return;
+    }
+
     // Route based on role (direct-access or after OAuth flow)
     if (!hasInitialized) {
       setHasInitialized(true);

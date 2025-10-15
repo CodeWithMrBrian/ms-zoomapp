@@ -68,16 +68,16 @@ export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMeth
   return (
     <SidebarSettingsLayout 
       className="bg-gray-50 dark:bg-gray-900"
-      pageTitle={`Settings - ${getCurrentTabLabel()}`}
+      pageTitle={`Settings Dashboard - ${getCurrentTabLabel()}`}
     >
       <div className="space-y-4 sm:space-y-6">
         {/* Navigation Header with Breadcrumbs */}
         <NavigationHeader
-          title="Settings"
+          title="Settings Dashboard"
           onBack={onBack}
           backLabel="Back"
           breadcrumbs={[
-            { label: 'Home', onClick: onBack },
+            { label: 'Settings', onClick: onBack },
             { label: getCurrentTabLabel() }
           ]}
         />
