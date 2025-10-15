@@ -16,6 +16,7 @@ import { ParticipantError, ParticipantErrorType } from './components/screens/par
 import { OAuthSSOScreen } from './components/screens/oauth/OAuthSSOScreen';
 import { WelcomeScreen } from './components/screens/oauth/WelcomeScreen';
 import { FreeTrialActivatedScreen } from './components/screens/oauth/FreeTrialActivatedScreen';
+import { AnalyticsDashboard } from './components/pages/AnalyticsDashboard';
 import { TierSelectionModal } from './components/screens/modals/TierSelectionModal';
 import { UsageWarningModal, UsageWarningType } from './components/screens/modals/UsageWarningModal';
 import { AddPaymentMethodModal } from './components/screens/modals/AddPaymentMethodModal';
@@ -55,6 +56,7 @@ type AppScreen =
   | 'host-active'
   | 'session-summary'     // Post-session summary with transcript download
   | 'host-settings'
+  | 'analytics-dashboard' // Analytics and usage dashboard
   | 'participant-language-select'
   | 'participant-caption-view'
   | 'participant-error';
@@ -164,12 +166,23 @@ function AppContent(props: AppContentProps): React.ReactElement | null {
 
   const handleReturnToDashboard = () => {
     setPreviousScreen(currentScreen);
-    setCurrentScreen('host-settings');
+    setCurrentScreen('analytics-dashboard');
   };
 
   const handleOpenSettings = () => {
     setPreviousScreen(currentScreen);
     setCurrentScreen('host-settings');
+  };
+
+  const handleOpenAnalyticsFromSettings = () => {
+    setPreviousScreen('host-settings');
+    setCurrentScreen('analytics-dashboard');
+  };
+
+  const handleBackFromAnalytics = () => {
+    // Always go back to host-settings when coming from analytics
+    setCurrentScreen('host-settings');
+    setPreviousScreen(null);
   };
 
   const handleCloseSettings = () => {
@@ -351,11 +364,6 @@ function AppContent(props: AppContentProps): React.ReactElement | null {
     setShowTierModal(true);
   };
 
-  const handleSkipWelcome = () => {
-    console.log('[App] User skipped welcome');
-    setCurrentScreen('host-setup');
-  };
-
   const handleStartFirstSession = () => {
     console.log('[App] User ready to start first session');
     setCurrentScreen('host-setup');
@@ -453,7 +461,6 @@ function AppContent(props: AppContentProps): React.ReactElement | null {
           isPaidZoom={user.zoom_account_type !== 1}
           onStartFreeTier={handleStartFreeTier}
           onSeePlans={handleSeePlans}
-          onSkip={handleSkipWelcome}
           onCancel={() => setCurrentScreen('host-settings')}
         />
       )}
@@ -488,6 +495,7 @@ function AppContent(props: AppContentProps): React.ReactElement | null {
           onStartNewSession={handleStartNewSession}
           onReturnToDashboard={handleReturnToDashboard}
           onOpenTierModal={handleOpenTierModal}
+          onSettings={handleOpenSettings}
         />
       )}
 
@@ -496,6 +504,13 @@ function AppContent(props: AppContentProps): React.ReactElement | null {
           onBack={handleCloseSettings}
           defaultTab="activity"
           onAddPaymentMethod={handleAddPaymentMethodFromSettings}
+          onViewAnalytics={handleOpenAnalyticsFromSettings}
+        />
+      )}
+
+      {currentScreen === 'analytics-dashboard' && (
+        <AnalyticsDashboard
+          onBack={handleBackFromAnalytics}
         />
       )}
 

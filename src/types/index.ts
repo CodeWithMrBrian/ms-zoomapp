@@ -86,6 +86,7 @@ export interface Session {
   allow_language_requests?: boolean; // Host allows participants to request additional languages
   allow_participant_overage?: boolean; // Host allows more than 100 participants
   tts_enabled?: boolean; // Host enables Text-to-Speech (TTS) for this session
+  last_updated?: number; // Timestamp to force React re-renders when session data changes
 }
 
 // ============================================

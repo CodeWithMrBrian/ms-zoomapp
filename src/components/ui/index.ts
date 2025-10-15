@@ -67,3 +67,6 @@ export type { ProgressIndicatorProps } from './ProgressIndicator';
 // NavigationHeader
 export { NavigationHeader, NavigationAction } from './NavigationHeader';
 export type { NavigationHeaderProps } from './NavigationHeader';
+
+// SidebarLayout
+export { SidebarLayout, SidebarSettingsLayout, SidebarCompactLayout } from './SidebarLayout';

@@ -67,9 +67,9 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onChange }) => {
   return (
     <div className="w-full">
       {/* Tab Headers with Enhanced Keyboard Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
         <nav 
-          className="flex space-x-8" 
+          className="flex space-x-2 sm:space-x-4 lg:space-x-8" 
           aria-label="Settings navigation"
           role="tablist"
         >
@@ -80,8 +80,9 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onChange }) => {
               onClick={() => handleTabClick(tab.id)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               className={`
-                group inline-flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm
+                group inline-flex items-center gap-1 sm:gap-2 py-4 px-1 border-b-2 font-medium text-xs sm:text-sm
                 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
+                whitespace-nowrap flex-shrink-0
                 ${
                   activeTab === tab.id
                     ? 'border-teal-600 dark:border-teal-500 text-teal-600 dark:text-teal-400 transform scale-105'
@@ -107,7 +108,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onChange }) => {
 
       {/* Tab Content with ARIA labeling */}
       <div 
-        className="mt-6"
+        className="mt-6 min-w-0 overflow-hidden"
         role="tabpanel"
         id={`tabpanel-${activeTab}`}
         aria-labelledby={`tab-${activeTab}`}

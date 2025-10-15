@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { NavigationHeader } from '../../ui/NavigationHeader';
+import { SidebarCompactLayout } from '../../ui/SidebarLayout';
+import { HelpModal } from '../modals/HelpModal';
 import { useSession } from '../../../context/SessionContext';
 import { useUser } from '../../../context/UserContext';
 import { getLanguageDisplayName } from '../../../utils/constants';
@@ -15,17 +18,20 @@ import { getLanguageDisplayName } from '../../../utils/constants';
  * - Download transcript button
  * - View detailed analytics link
  * - Start new session or return to dashboard
+ * - Settings and Help access
  */
 
 interface SessionSummaryProps {
   onStartNewSession: () => void;
   onReturnToDashboard: () => void;
   onOpenTierModal: () => void;
+  onSettings: () => void;
 }
 
-export function SessionSummary({ onStartNewSession, onReturnToDashboard, onOpenTierModal }: SessionSummaryProps) {
+export function SessionSummary({ onStartNewSession, onReturnToDashboard, onOpenTierModal, onSettings }: SessionSummaryProps) {
   const { session, duration, cost } = useSession();
   const { user, isPAYG, isDailyFreeTier, dailyMinutesRemaining } = useUser();
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   // FIX #4: Use getLanguageDisplayName helper to return string (not Language object)
   const getLanguageName = (code: string) => {
@@ -53,13 +59,21 @@ export function SessionSummary({ onStartNewSession, onReturnToDashboard, onOpenT
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 space-y-4 sm:space-y-6">
-      {/* Navigation Header */}
-      <NavigationHeader
-        title="Session Complete"
-        onBack={onReturnToDashboard}
-        backLabel="Dashboard"
-      />
+    <SidebarCompactLayout 
+      className="bg-gray-50 dark:bg-gray-900"
+      pageTitle="Session Complete"
+    >
+      <div className="space-y-4 sm:space-y-6">
+        {/* Navigation Header */}
+        <NavigationHeader
+          title="Session Complete"
+          onBack={onReturnToDashboard}
+          backLabel="Dashboard"
+          showSettings={true}
+          onSettings={onSettings}
+          showHelp={true}
+          onHelp={() => setShowHelpModal(true)}
+        />
 
       {/* Success Message */}
       <Card variant="default" padding="lg">
@@ -299,6 +313,13 @@ export function SessionSummary({ onStartNewSession, onReturnToDashboard, onOpenT
           </CardContent>
         </Card>
       )}
-    </div>
+
+        {/* Help Modal */}
+        <HelpModal
+          isOpen={showHelpModal}
+          onClose={() => setShowHelpModal(false)}
+        />
+      </div>
+    </SidebarCompactLayout>
   );
 }

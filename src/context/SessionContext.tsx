@@ -42,6 +42,7 @@ interface SessionContextValue {
   updateMeetingType: (type: MeetingType) => void;
   updateGlossary: (glossaryId: string | null) => void;
   addLanguageToSession: (languageCode: string) => void;
+  addLanguagesToSession: (languageCodes: string[]) => void;
 
   // Real-time updates (mock)
   addParticipant: (participant: Participant) => void;
@@ -333,6 +334,46 @@ export function SessionProvider({ children }: { children: ReactNode}) {
   }, []);
 
   /**
+   * Add multiple languages to active session (prevents race conditions)
+   */
+  const addLanguagesToSession = useCallback((languageCodes: string[]) => {
+    console.log('[SessionContext] addLanguagesToSession called with:', languageCodes);
+    setSession(prev => {
+      console.log('[SessionContext] Previous session state:', prev);
+      console.log('[SessionContext] Previous target_languages:', prev?.target_languages);
+      
+      if (!prev) {
+        console.warn('[SessionContext] No previous session, returning null');
+        return null;
+      }
+
+      // Filter out languages that already exist
+      const newLanguages = languageCodes.filter(code => !prev.target_languages.includes(code));
+      console.log('[SessionContext] New languages to add:', newLanguages);
+      console.log('[SessionContext] Already existing languages:', languageCodes.filter(code => prev.target_languages.includes(code)));
+      
+      if (newLanguages.length === 0) {
+        console.warn('[SessionContext] All languages already in session:', languageCodes);
+        return prev;
+      }
+
+      // Add all new languages to target_languages
+      const newTargetLanguages = [...prev.target_languages, ...newLanguages];
+      console.log('[SessionContext] New target_languages will be:', newTargetLanguages);
+
+      const newSession = {
+        ...prev,
+        target_languages: newTargetLanguages,
+        // Add a timestamp to ensure the object reference changes
+        last_updated: Date.now()
+      };
+      
+      console.log('[SessionContext] Returning new session:', newSession);
+      return newSession;
+    });
+  }, []);
+
+  /**
    * Add a participant to the session
    */
   const addParticipant = useCallback((participant: Participant) => {
@@ -471,6 +512,7 @@ export function SessionProvider({ children }: { children: ReactNode}) {
     updateMeetingType,
     updateGlossary,
     addLanguageToSession,
+    addLanguagesToSession,
     addParticipant,
     removeParticipant,
     addCaption

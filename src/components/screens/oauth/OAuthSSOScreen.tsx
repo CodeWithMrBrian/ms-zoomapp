@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Card } from '../../ui';
+import { SidebarCompactLayout } from '../../ui/SidebarLayout';
 
 export interface OAuthSSOScreenProps {
   onSignIn: () => void;
@@ -27,7 +28,10 @@ export function OAuthSSOScreen({ onSignIn }: OAuthSSOScreenProps) {
   };
 
   return (
-    <div className="h-full flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-gray-50 dark:from-gray-900 dark:to-gray-800">
+    <SidebarCompactLayout 
+      className="min-h-full flex items-start justify-center bg-gradient-to-br from-blue-50 to-gray-50 dark:from-gray-900 dark:to-gray-800 py-4"
+      pageTitle="Connect to Zoom"
+    >
       <Card variant="beautiful" className="max-w-md w-full">
         <div className="text-center space-y-6 p-8">
           {/* Zoom Logo Placeholder */}
@@ -134,6 +138,6 @@ export function OAuthSSOScreen({ onSignIn }: OAuthSSOScreenProps) {
           </div>
         </div>
       </Card>
-    </div>
+    </SidebarCompactLayout>
   );
 }

@@ -28,7 +28,11 @@ import { ExportDataModal } from '../modals/ExportDataModal';
 
 type ActivityView = 'main' | 'session-detail';
 
-export function ActivityTab() {
+interface ActivityTabProps {
+  onViewAnalytics?: () => void;
+}
+
+export function ActivityTab({ onViewAnalytics }: ActivityTabProps) {
   const { user } = useUser();
 
   const [currentView, setCurrentView] = useState<ActivityView>('main');
@@ -131,7 +135,7 @@ export function ActivityTab() {
               </>
             )}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-gray-600 dark:text-gray-400">Sessions</p>
                 <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">{MOCK_SESSIONS.length}</p>
@@ -154,9 +158,11 @@ export function ActivityTab() {
               <Button variant="secondary" size="sm">
                 Export This Month's Data ↓
               </Button>
-              <Button variant="tertiary" size="sm">
-                View All Time Stats
-              </Button>
+              {onViewAnalytics && (
+                <Button variant="primary" size="sm" onClick={onViewAnalytics}>
+                  📊 View Detailed Analytics
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
@@ -168,8 +174,8 @@ export function ActivityTab() {
           <CardTitle>Filter & Search</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input
                 type="date"
                 label="Date From"
@@ -184,7 +190,7 @@ export function ActivityTab() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Select
                 label="Meeting Type"
                 value={meetingTypeFilter}
@@ -214,7 +220,7 @@ export function ActivityTab() {
               />
             </div>
 
-            <div className="md:col-span-2">
+            <div className="col-span-full">
               <Input
                 type="text"
                 placeholder="Search meeting title or host name..."
@@ -231,9 +237,16 @@ export function ActivityTab() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Session History</CardTitle>
-            <Button variant="secondary" size="sm" onClick={() => setShowExportModal(true)}>
-              Export CSV ↓
-            </Button>
+            <div className="flex items-center gap-2">
+              {onViewAnalytics && (
+                <Button variant="primary" size="sm" onClick={onViewAnalytics}>
+                  📊 View Analytics
+                </Button>
+              )}
+              <Button variant="secondary" size="sm" onClick={() => setShowExportModal(true)}>
+                Export CSV ↓
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -252,34 +265,34 @@ export function ActivityTab() {
                 className="cursor-pointer"
                 onClick={() => handleViewSession(session.id)}
               >
-                <div className="space-y-3">
+                  <div className="space-y-3">
                   {/* Header: Date & Time */}
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate min-w-0 flex-1">
                       {formatDate(session.date_time_start)}
                       {session.date_time_end && ` - ${new Date(session.date_time_end).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`}
                       {session.duration_hours && ` (${session.duration_hours.toFixed(1)} hrs)`}
                     </h3>
-                    {getStatusBadge(session.status)}
-                  </div>
-
-                  <div className="border-t border-gray-100 dark:border-gray-700 pt-2 space-y-1.5 text-sm">
-                    <p>
+                    <div className="flex-shrink-0">
+                      {getStatusBadge(session.status)}
+                    </div>
+                  </div>                  <div className="border-t border-gray-100 dark:border-gray-700 pt-2 space-y-1.5 text-sm min-w-0">
+                    <p className="break-words">
                       <strong>Meeting:</strong> {session.meeting_title}
                     </p>
-                    <p>
+                    <p className="break-words">
                       <strong>Host:</strong> {session.host_name}
                     </p>
                     <p>
                       <strong>Meeting Type:</strong> {session.meeting_type.charAt(0).toUpperCase() + session.meeting_type.slice(1)}
                     </p>
-                    <p>
+                    <p className="break-words">
                       <strong>Languages:</strong> {getLanguageName(session.source_language)} → {session.target_languages.map(code => getLanguageName(code)).join(', ')}
                     </p>
                     <p>
                       <strong>Participants:</strong> {session.participant_count_total} total ({session.participant_count_viewing} viewing translations)
                     </p>
-                    <p>
+                    <p className="break-words">
                       <strong>Cost:</strong> {formatCurrency(session.cost)}
                       {session.participant_multiplier_value && session.participant_multiplier_value > 1.0 && (
                         <span className="text-xs text-gray-600 dark:text-gray-400 ml-2">
@@ -290,7 +303,7 @@ export function ActivityTab() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex gap-2 pt-2 flex-wrap">
                     <Button
                       variant="primary"
                       size="sm"

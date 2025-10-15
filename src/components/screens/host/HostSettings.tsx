@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Tabs, Tab } from '../../ui/Tabs';
+import { NavigationHeader } from '../../ui/NavigationHeader';
+import { SidebarSettingsLayout } from '../../ui/SidebarLayout';
 import { ActivityTab } from '../../features/ActivityTab';
 import { TemplatesTab } from '../../features/TemplatesTab';
 import { GlossariesTab } from '../../features/GlossariesTab';
@@ -23,14 +25,15 @@ interface HostSettingsProps {
   onBack: () => void;
   defaultTab?: string;
   onAddPaymentMethod?: () => void; // Callback to open AddPaymentMethodModal
+  onViewAnalytics?: () => void; // Callback to navigate to analytics dashboard
 }
 
-export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMethod }: HostSettingsProps) {
+export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMethod, onViewAnalytics }: HostSettingsProps) {
   const tabs: Tab[] = [
     {
       id: 'activity',
       label: 'Activity',
-      content: <ActivityTab />
+      content: <ActivityTab onViewAnalytics={onViewAnalytics} />
     },
     {
       id: 'templates',
@@ -63,38 +66,29 @@ export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMeth
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-700 dark:to-cyan-700 rounded-lg px-6 py-4 shadow-lg mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-2xl font-bold text-white">MeetingSync - Settings</h1>
-          <button
-            onClick={onBack}
-            className="text-white hover:text-teal-100 transition-colors text-sm font-medium"
-          >
-            ← Back
-          </button>
-        </div>
+    <SidebarSettingsLayout 
+      className="bg-gray-50 dark:bg-gray-900"
+      pageTitle={`Settings - ${getCurrentTabLabel()}`}
+    >
+      <div className="space-y-4 sm:space-y-6">
+        {/* Navigation Header with Breadcrumbs */}
+        <NavigationHeader
+          title="Settings"
+          onBack={onBack}
+          backLabel="Back"
+          breadcrumbs={[
+            { label: 'Home', onClick: onBack },
+            { label: getCurrentTabLabel() }
+          ]}
+        />
 
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-sm">
-          <button
-            onClick={onBack}
-            className="text-teal-100 hover:text-white transition-colors"
-          >
-            Home
-          </button>
-          <span className="text-teal-200">/</span>
-          <span className="text-white font-medium">{getCurrentTabLabel()}</span>
-        </nav>
+        {/* Tabbed Interface */}
+        <Tabs
+          tabs={tabs}
+          defaultTab={defaultTab}
+          onChange={setCurrentTab}
+        />
       </div>
-
-      {/* Tabbed Interface */}
-      <Tabs
-        tabs={tabs}
-        defaultTab={defaultTab}
-        onChange={setCurrentTab}
-      />
-    </div>
+    </SidebarSettingsLayout>
   );
 }

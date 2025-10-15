@@ -102,7 +102,7 @@ export function GlossariesTab() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-600 dark:text-gray-400">Total Terms</p>
                   <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">
@@ -111,7 +111,7 @@ export function GlossariesTab() {
                 </div>
                 <div>
                   <p className="text-gray-600 dark:text-gray-400">Languages</p>
-                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 break-words">
                     {viewingGlossary.languages.join(', ').toUpperCase()}
                   </p>
                 </div>
