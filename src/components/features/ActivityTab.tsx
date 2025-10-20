@@ -11,6 +11,7 @@ import { SessionStatus } from '../../types';
 import { formatCurrency, formatDate } from '../../utils/constants';
 import { SessionDetailPage } from '../pages/SessionDetailPage';
 import { ExportDataModal } from '../modals/ExportDataModal';
+import { generateSessionReportPDF, simulateDownload } from '../../utils/exportUtils';
 
 /**
  * ActivityTab Component
@@ -38,6 +39,7 @@ export function ActivityTab({ onViewAnalytics }: ActivityTabProps) {
   const [currentView, setCurrentView] = useState<ActivityView>('main');
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [downloadingReport, setDownloadingReport] = useState<string | null>(null);
 
   const [dateFrom, setDateFrom] = useState('2025-10-01');
   const [dateTo, setDateTo] = useState('2025-10-31');
@@ -155,7 +157,7 @@ export function ActivityTab({ onViewAnalytics }: ActivityTabProps) {
             </div>
 
             <div className="flex gap-3">
-              <Button variant="secondary" size="sm">
+              <Button variant="secondary" size="sm" onClick={() => setShowExportModal(true)}>
                 Export This Month's Data ↓
               </Button>
               {onViewAnalytics && (
@@ -317,12 +319,19 @@ export function ActivityTab({ onViewAnalytics }: ActivityTabProps) {
                     <Button
                       variant="secondary"
                       size="sm"
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
-                        alert('Download report feature coming soon!');
+                        setDownloadingReport(session.id);
+
+                        await simulateDownload(() => {
+                          generateSessionReportPDF(session);
+                        });
+
+                        setDownloadingReport(null);
                       }}
+                      disabled={downloadingReport === session.id}
                     >
-                      Download Report
+                      {downloadingReport === session.id ? 'Generating...' : 'Download Report'}
                     </Button>
                   </div>
                 </div>

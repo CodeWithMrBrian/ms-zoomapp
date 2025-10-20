@@ -9,6 +9,7 @@ import { formatCurrency, formatDate, PRICING_TIERS } from '../../utils/constants
 import { pricingConfig } from '../../utils/pricingManager';
 import { InvoiceDetailPage } from '../pages/InvoiceDetailPage';
 import { PaymentMethodsPage } from '../pages/PaymentMethodsPage';
+import { generateInvoicePDF, simulateDownload } from '../../utils/exportUtils';
 
 /**
  * AccountTab Component
@@ -27,12 +28,15 @@ type AccountView = 'main' | 'invoice-detail' | 'payment-methods';
 
 export interface AccountTabProps {
   onAddPaymentMethod?: () => void; // Callback to open AddPaymentMethodModal in App.tsx
+  onNavigateToSettings?: () => void; // Callback to close settings and return to previous screen
+  onChangeTier?: () => void; // Callback to open TierSelectionModal
 }
 
-export function AccountTab({ onAddPaymentMethod }: AccountTabProps = {}) {
+export function AccountTab({ onAddPaymentMethod, onNavigateToSettings, onChangeTier }: AccountTabProps = {}) {
   const { user, isPAYG } = useUser();
   const [currentView, setCurrentView] = useState<AccountView>('main');
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
+  const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
 
   // Handle viewing invoice detail
   const handleViewInvoice = (invoiceId: string) => {
@@ -183,10 +187,20 @@ export function AccountTab({ onAddPaymentMethod }: AccountTabProps = {}) {
                 <Button
                   variant="primary"
                   onClick={() => {
-                    const planList = Object.values(PRICING_TIERS)
-                      .map((tier: any) => `• ${tier.name} (${pricingConfig.formatHourlyRate(tier.price_per_hour)} - ${pricingConfig.formatLanguageLimitsDescription(tier.translation_limit, tier.total_language_limit)})`)
-                      .join('\n');
-                    alert(`To select a pricing plan:\n\n1. Close this Settings page (click Back button)\n2. You\'ll return to the Start Translation screen\n3. The pricing tier selector will be available there\n\nChoose from:\n${planList}`);
+                    // Close settings and return to previous screen where tier selection is available
+                    if (onNavigateToSettings) {
+                      onNavigateToSettings();
+                      // Show a brief guidance message
+                      setTimeout(() => {
+                        alert('To choose your pricing plan:\n\n1. You can select your tier when starting a new session\n2. Or go back to Settings > Account to manage your subscription\n\nYou\'ll only be billed for actual usage at the end of each month.');
+                      }, 300);
+                    } else {
+                      // Fallback if callback not provided
+                      const planList = Object.values(PRICING_TIERS)
+                        .map((tier: any) => `• ${tier.name} (${pricingConfig.formatHourlyRate(tier.price_per_hour)} - ${pricingConfig.formatLanguageLimitsDescription(tier.translation_limit, tier.total_language_limit)})`)
+                        .join('\n');
+                      alert(`To select a pricing plan:\n\n1. Close this Settings page (click Back button)\n2. You\'ll return to the Start Translation screen\n3. The pricing tier selector will be available there\n\nChoose from:\n${planList}`);
+                    }
                   }}
                 >
                   Choose Your Plan
@@ -244,7 +258,16 @@ export function AccountTab({ onAddPaymentMethod }: AccountTabProps = {}) {
 
               {/* Plan Actions */}
               <div className="flex gap-3 pt-2">
-                <Button variant="primary" onClick={() => alert('Change tier feature coming soon!')}>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    if (onChangeTier) {
+                      onChangeTier();
+                    } else {
+                      alert('Change tier feature coming soon!');
+                    }
+                  }}
+                >
                   Change Tier
                 </Button>
                 <Button variant="secondary" onClick={handleManagePaymentMethods}>
@@ -348,8 +371,21 @@ export function AccountTab({ onAddPaymentMethod }: AccountTabProps = {}) {
                       <Button variant="primary" size="sm" onClick={() => handleViewInvoice(invoice.id)}>
                         View Details
                       </Button>
-                      <Button variant="secondary" size="sm" onClick={() => alert('Download PDF feature coming soon!')}>
-                        Download PDF
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={async () => {
+                          setDownloadingInvoice(invoice.id);
+
+                          await simulateDownload(() => {
+                            generateInvoicePDF(invoice);
+                          });
+
+                          setDownloadingInvoice(null);
+                        }}
+                        disabled={downloadingInvoice === invoice.id}
+                      >
+                        {downloadingInvoice === invoice.id ? 'Generating...' : 'Download PDF'}
                       </Button>
                     </div>
                   </div>

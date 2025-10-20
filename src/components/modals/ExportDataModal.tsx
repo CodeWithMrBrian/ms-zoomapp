@@ -6,6 +6,8 @@ import { Input } from '../ui/Input';
 import { Checkbox } from '../ui/Checkbox';
 import { ProgressIndicator } from '../ui/ProgressIndicator';
 import { useToast, Toast } from '../ui/Toast';
+import { MOCK_SESSIONS } from '../../utils/mockData';
+import { generateSessionsCSV, simulateDownload } from '../../utils/exportUtils';
 
 export interface ExportDataModalProps {
   isOpen: boolean;
@@ -72,16 +74,35 @@ export function ExportDataModal({ isOpen, onClose }: ExportDataModalProps) {
   const handleExport = async () => {
     setIsExporting(true);
 
-    // Simulate export delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    if (emailDelivery) {
+      // Simulate email delivery
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      showToast('Export started. You will receive an email when ready.', 'success');
+    } else {
+      // Actual export with download
+      if (dataType === 'sessions') {
+        // Filter sessions by date range
+        const filteredSessions = MOCK_SESSIONS.filter(session => {
+          const sessionDate = new Date(session.date_time_start);
+          const from = dateFrom ? new Date(dateFrom) : new Date(0);
+          const to = dateTo ? new Date(dateTo) : new Date();
+          return sessionDate >= from && sessionDate <= to;
+        });
+
+        await simulateDownload(() => {
+          const filename = `sessions-export-${dateFrom}-to-${dateTo}.csv`;
+          generateSessionsCSV(filteredSessions, filename);
+        }, 1500);
+
+        showToast(`Exported ${filteredSessions.length} sessions successfully!`, 'success');
+      } else {
+        // For transcripts and invoices, show coming soon
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        showToast(`${dataType} export will be available soon!`, 'info');
+      }
+    }
 
     setIsExporting(false);
-    showToast(
-      emailDelivery
-        ? 'Export started. You will receive an email when ready.'
-        : 'Export completed successfully!',
-      'success'
-    );
     handleClose();
   };
 

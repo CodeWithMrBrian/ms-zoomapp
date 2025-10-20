@@ -26,9 +26,13 @@ interface HostSettingsProps {
   defaultTab?: string;
   onAddPaymentMethod?: () => void; // Callback to open AddPaymentMethodModal
   onViewAnalytics?: () => void; // Callback to navigate to analytics dashboard
+  onChangeTier?: () => void; // Callback to open TierSelectionModal
 }
 
-export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMethod, onViewAnalytics }: HostSettingsProps) {
+export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMethod, onViewAnalytics, onChangeTier }: HostSettingsProps) {
+  const [currentTab, setCurrentTab] = useState(defaultTab);
+  const [templatesInSubView, setTemplatesInSubView] = useState(false);
+
   const tabs: Tab[] = [
     {
       id: 'activity',
@@ -38,7 +42,7 @@ export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMeth
     {
       id: 'templates',
       label: 'Templates',
-      content: <TemplatesTab />
+      content: <TemplatesTab onSubViewChange={setTemplatesInSubView} />
     },
     {
       id: 'glossaries',
@@ -48,7 +52,7 @@ export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMeth
     {
       id: 'account',
       label: 'Account',
-      content: <AccountTab onAddPaymentMethod={onAddPaymentMethod} />
+      content: <AccountTab onAddPaymentMethod={onAddPaymentMethod} onNavigateToSettings={onBack} onChangeTier={onChangeTier} />
     },
     {
       id: 'preferences',
@@ -57,30 +61,33 @@ export function HostSettings({ onBack, defaultTab = 'activity', onAddPaymentMeth
     }
   ];
 
-  const [currentTab, setCurrentTab] = useState(defaultTab);
-
   // Get current tab label
   const getCurrentTabLabel = () => {
     const tab = tabs.find(t => t.id === currentTab);
     return tab?.label || 'Settings';
   };
 
+  // Determine if we should show the main navigation header
+  const showMainNavigation = !(currentTab === 'templates' && templatesInSubView);
+
   return (
-    <SidebarSettingsLayout 
+    <SidebarSettingsLayout
       className="bg-gray-50 dark:bg-gray-900"
       pageTitle={`Settings Dashboard - ${getCurrentTabLabel()}`}
     >
       <div className="space-y-4 sm:space-y-6">
-        {/* Navigation Header with Breadcrumbs */}
-        <NavigationHeader
-          title="Settings Dashboard"
-          onBack={onBack}
-          backLabel="Back"
-          breadcrumbs={[
-            { label: 'Settings', onClick: onBack },
-            { label: getCurrentTabLabel() }
-          ]}
-        />
+        {/* Navigation Header with Breadcrumbs - Hidden when in template sub-views */}
+        {showMainNavigation && (
+          <NavigationHeader
+            title="Settings Dashboard"
+            onBack={onBack}
+            backLabel="Back"
+            breadcrumbs={[
+              { label: 'Settings', onClick: onBack },
+              { label: getCurrentTabLabel() }
+            ]}
+          />
+        )}
 
         {/* Tabbed Interface */}
         <Tabs
